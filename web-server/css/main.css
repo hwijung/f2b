@@ -1,0 +1,22 @@
+section.login_section { display:inline-block; }
+section.signin_section { display:inline-block;  }
+
+section.login_section form#login_form {
+  display: inline-block;
+}
+section.login_section.login_success form#login_form {
+	display: none;
+}
+
+section.signin_section form#signin_form {
+	display: none;
+}
+
+div#loggedin_status_div {
+  display: none;
+}
+
+div#loggedin_status_div.login_success {
+  display: inline-block;
+}
+
