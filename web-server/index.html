@@ -1,0 +1,310 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>Facebook to Wordpress, Daily backup</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+		<meta http-equiv="Content-Language" content="en-us"> 
+
+		<link href="./css/main.css" rel="stylesheet" type="text/css">
+		<link href="./css/style.css" rel="stylesheet" type="text/css">
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script> 
+
+		<script type="text/javascript">
+			function clean_up_login_form ()	{
+				$("#usermail").focus ().val ("");
+				$("#password").val ("");
+			}
+
+			function clean_up_fb_account_form () {
+				$("#fb_name").val ( "" );
+			}
+
+			function fill_fb_account_form ( fb_name ) {
+				if ( fb_name == null )	{
+					$.get ( 'fb.php', null, function ( result ) {
+						$("#fb_name").val ( result['fb_name'] );
+					}, 'json' );
+				} else {
+					$("#fb_name").val ( fb_name );
+				}
+			}
+
+			function clean_up_wp_account_form () {
+				$("#wp_address").val ( "" );
+				$("#wp_id").val ( "" );
+				$("#wp_password").val ( "" );				
+			}
+
+			function fill_wp_account_form () {
+				$.get ( 'wp.php', null, function ( result ) {
+					$("#wp_address").val ( result['wp_address'] );
+					$("#wp_id").val ( result['wp_id'] );
+					$("#wp_password").val ( result['wp_password'] );
+					$("#wp_account_form input").attr( 'disabled', 'true' );
+				}, 'json' );
+			}
+			
+			$(document).ready ( function () {
+
+				// Login form animation
+				$(".username").focus(function() { 
+					$(".user-icon").css("left","12px");
+				});
+				$(".username").blur(function() {
+					$(".user-icon").css("left","50px");
+				});
+	
+				$(".password").focus(function() {
+					$(".pass-icon").css("left","12px");
+				});
+				$(".password").blur(function() {
+					$(".pass-icon").css("left","50px");
+				});
+
+				$("#btn-login-register").click ( function () {
+					$("#signin-form").fadeIn ( 'slow' );
+				} );
+
+				$("#btn-signin-cancel").click ( function () {
+					$("#signin-form").fadeOut ( 'slow' );
+				});
+
+				$("#btn_signin").click ( function ()	{
+					if ( "none" == $("#signin_form").css ( "display" ) )	{
+						$("#signin_form").show ( 200 );
+						$("#btn_signin").html ( "Close" );
+					} else {
+						$("#signin_form").hide ( 200 );
+						$("#btn_signin").html ( "Sign In" );
+					}
+				} );
+
+				// When login button clicked 
+				$("#btn-login").click ( function ()	{
+					$.post ( 'login.php', { usermail: $("#usermail").val (), password: $("#password").val () } , function ( result ) {
+							if ( result )	{
+								// login success
+								$("#usermail").addClass ( "loggedin" ).attr ( "disabled", "true" );
+								$("#password").addClass ( "loggedin" ).attr ( "disabled", "true" );
+
+								// update forms
+								fill_fb_account_form ();
+								fill_wp_account_form ();
+
+							} else {
+								alert ( 'login failure' );
+							}
+						}, 'json' );
+
+					// update for login failure
+					return false;
+				});
+
+				// When sign in button clicked
+				$("#signin_form").submit ( function ()	{
+					$.post ( 'signin.php', $("#signin_form").serialize(),
+						function ( result ) {
+							if ( result )	{
+								alert ( 'sign in success!' );
+							}
+						}, 'json' );
+
+					// update for signin failure
+					return false;
+				});
+
+				// When logout button clicked
+				$("#btn_logout").click ( function () {
+					$.post ( 'logout.php' );
+					$("#login_section").removeClass ( "login_success" );
+					$("#loggedin_status_div").removeClass ( "login_success" );
+
+					clean_up_login_form ();
+					clean_up_wp_account_form ();
+					clean_up_fb_account_form ();
+				});
+
+				// When fb edit button clicked
+				/*
+				$("#btn_edit_fb_account").click ( function () {
+					$.get ( 'fb_loginurl_redirect.php', null, function ( result ) {
+							if ( result['fb_user'] == null )	{
+								var url = result['loginUrl'];
+								window.open ( url );
+							} else {
+								alert ( result['fb_user'] );
+							}
+
+					}, 'json' );
+					
+				});*/
+
+				// When fb Login button clicked
+				$("#btn_login_fb_account").click ( function ()	{
+					var result = window.showModalDialog ( "http://211.51.13.118/f2b/fbaccess.php");
+					if ( result )	{
+						alert ( result );
+					}
+				});
+
+				// When wp edit button clicked
+				$("#btn_edit_wp_account").click ( function () {
+					$("#wp_account_form input").removeAttr( 'disabled' );
+				});
+
+				// When wp save button clicked
+				$("#wp_account_form").submit ( function () {
+					var post_variables = $("#wp_account_form").serialize ();
+					$.post ( 'wp.php', post_variables, function ( result ) {
+						if (  result ) {
+							$("#wp_account_form input").attr( 'disabled', 'true' );
+						}
+					}, 'json' );
+					return false;	
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<header class="logo-header">
+			<div id="logo"></div>
+			<!--<h1>Facebook to Wordpress</h1>-->
+			<p>This service write daily summerize of your Facebook account.</p>
+		</header>
+
+		<div id="sidebar">
+			<div id="wrapper">
+				<!--SLIDE-IN ICONS-->
+		 	   <div class="user-icon"></div>
+		 	   <div class="pass-icon"></div>		
+
+		 	   <form name="login-form" class="login-form" action="">
+		 	   		<div class="header">
+		 	   			<h1>Login</h1>
+		 	   			<span>Input your ID and Password.</span>
+		 	   		</div>
+		 	   		
+		 	   		<div class="content">
+						<input id="usermail" name="usermail" type="text" class="text-input" value="Username" />
+					    <input id="password" name="password" type="password" class="text-input" value="Password" />
+					</div>
+					    
+					<!--FOOTER-->
+					<div class="footer">
+						<input id="btn-login" type="button" name="submit" value="Login" class="button" />
+					    <input id="btn-login-register" type="button" name="submit" value="Register" class="register" />
+					</div>
+		 	   	</form>
+
+		 	   	<form id="signin-form" name="signin-form" class="signin-form" action="" hidden="true">
+		 	   		<div class="header">
+		 	   			<h1>Sign in</h1>
+		 	   			<span>create new account.</span>
+		 	   		</div>
+		 	   		<div class="content">
+			 	   		<input name="signin-username" type="text" class="text-input" value="Type new name" />
+			 	   		<input name="signin-password" type="text" class="text-input" value="Type password" />
+			 	   		<input name="signin-password-confirm" type="text" class="text-input" value="Re-type password" />
+			 	   	</div>
+
+			 	   	<div class="footer">
+			 	   		<input id="btn-signin-cancel" type="button" name="cancel" value="Cancel" class="cancel"/>
+			 	   		<input type="button" name="submit" value="Create" class="create"/>
+			 	   	</div>
+		 	   	</form>
+			</div>
+		</div>
+
+
+		<!-- log in and its related elements -->
+		<!--
+		<div id="contents-area">
+			<div>
+				<section class="login_section" id="login_section" >
+					
+					<form name="login" id="login_form" accept-charset="utf-8">
+						<label>E-Mail</label>
+						<input id="usermail" type="email" name="usermail"  required>
+						<label>Password</label>
+						<input id="password" type="password" name="password"  equired>
+						<input type="submit" value="Login">
+					</form>
+
+			
+					<div id="loggedin_status_div" >
+						<label id="loggedin_id">You are logged in</label>
+						<button id="btn_logout">Log out</button>
+					</div>
+
+					<button id="btn_signin" value="Signin">Sign In</button>
+				</section>
+
+				<section class="signin_section" id="signin_section">
+					<form name="signin" id="signin_form" accept-charset="utf-8">
+						<p>Create new accounts</p>
+						<label>E-Mail</label>
+						<input type="email" name="usermail" required>
+						<label for="password">Password</label>
+						<input type="password" name="password" required>		
+						<label>Password Confirm</label>
+						<input type="password" name="password_confirm" required>
+						<input type="submit" value="Create Account">	
+					</form>
+				</section>
+			</div>
+			-->
+
+		<!-- Edit settings -->
+		<h3>Your settings</h3>
+		<div>
+			<h4> Accounts </h4>
+			<label>Facebook account:</label>
+			<button id="btn_login_fb_account">Login</button>
+			<form id="fb_account_form" accept-charset="utf-8">
+				<label>Facebook ID</label>
+				<input type="text" id="fb_name" name="fb_name" required disabled>
+			</form>
+				
+			<br/>
+
+			<label>Wordpress account:</label>
+			<button id="btn_edit_wp_account">Edit</button>
+
+			<form id="wp_account_form" accept-charset="utf-8">
+				<label>Address</label>
+				<input type="text" id="wp_address" name="wp_address" required disabled>
+				<label>User ID</label>
+				<input type="text" id="wp_id" name="wp_id" required disabled>
+				<label>Password</label>
+				<input type="password" id="wp_password" name="wp_password" required disabled>
+				<input type="submit" value="Save" disabled>
+			</form>
+		</div>
+
+		<div>
+			<h4> Publishing </h4>
+			<button id="btn_activate">Activate</button>
+			<button id="btn_deactivate">Deactivate</button>
+		</div>
+
+		<div>
+			<h4> Templates </h4>
+			<textarea>some texts here..</textarea>
+			<button id="btn_save_template">Save</button>
+		</div>
+
+		<footer>
+			<nav>
+      			<p>
+      				<a href="/credits.html">Credits</a> —
+           			<a href="/tos.html">Terms of Service</a> —
+           			<a href="http://www.linus.pe.kr/home/wordpress">Blog</a>
+           		</p>
+    		</nav>
+
+    		<p>Copyright © 2013 Hwijung Ryu</p>
+		</footer>
+	</body>
+</html>
