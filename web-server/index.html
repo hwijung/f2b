@@ -206,42 +206,44 @@
 		</div>
 
 		<!-- Edit settings -->
-		<h3>Your settings</h3>
-		<div>
-			<h4> Accounts </h4>
-			<label>Facebook account:</label>
-			<button id="id_button_login_fb_account">Login</button>
-			<form id="id_form_fb_account" accept-charset="utf-8">
-				<label>Facebook ID</label>
-				<input type="text" id="id_text_fb_name" name="nm_text_fb_name" required disabled>
-			</form>
+		<div id="id_settings" class="cs_settings">
+			<h1>Your settings</h1>
+
+			<div id="id_settings_accounts" class="cs_settings_accounts">
+				<h4> Accounts </h4>
 				
-			<br/>
+				<form id="id_form_accounts" accept-charset="utf-8">
+					<label>Facebook account:</label>
+					<button id="id_button_login_fb_account">Login</button>
+					<label>Facebook ID</label>
+					<input type="text" id="id_text_fb_name" name="nm_text_fb_name" required disabled>
+				</form>
+					
+				<label>Wordpress account:</label>
+				<button id="id_button_edit_wp_account">Edit</button>
 
-			<label>Wordpress account:</label>
-			<button id="id_button_edit_wp_account">Edit</button>
+				<form id="id_form_wp_account" accept-charset="utf-8">
+					<label>Address</label>
+					<input type="text" id="id_text_wp_address" name="nm_wp_address" required disabled>
+					<label>User ID</label>
+					<input type="text" id="id_text_wp_id" name="nm_wp_id" required disabled>
+					<label>Password</label>
+					<input type="password" id="id_text_wp_password" name="nm_wp_password" required disabled>
+					<input type="submit" value="Save" disabled>
+				</form>
+			</div>
 
-			<form id="id_form_wp_account" accept-charset="utf-8">
-				<label>Address</label>
-				<input type="text" id="id_text_wp_address" name="nm_wp_address" required disabled>
-				<label>User ID</label>
-				<input type="text" id="id_text_wp_id" name="nm_wp_id" required disabled>
-				<label>Password</label>
-				<input type="password" id="id_text_wp_password" name="nm_wp_password" required disabled>
-				<input type="submit" value="Save" disabled>
-			</form>
-		</div>
+			<div id="id_settings_publishing" class="cs_settings_publishing">
+				<h4> Publishing </h4>
+				<button id="id_button_activate">Activate</button>
+				<button id="id_button_deactivate">Deactivate</button>
+			</div>
 
-		<div>
-			<h4> Publishing </h4>
-			<button id="id_button_activate">Activate</button>
-			<button id="id_button_deactivate">Deactivate</button>
-		</div>
-
-		<div>
-			<h4> Templates </h4>
-			<textarea>some texts here..</textarea>
-			<button id="id_button_save_template">Save</button>
+			<div id="id_settings_templates" class="cs_settings_templates">
+				<h4> Templates </h4>
+				<textarea>some texts here..</textarea>
+				<button id="id_button_save_template">Save</button>
+			</div>
 		</div>
 
 		<footer>
