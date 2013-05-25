@@ -26,20 +26,20 @@ body {
 	text-decoration: none;
 }
 
-#sidebar {
+#id_sidebar {
 	float:left;
 	width: 280px;
 }
 
 /* Logo - Header */
-.logo-header {
+.cs_header_logo {
 
 }
 
-.logo-header #logo { 
+.cs_header_logo #id_header_logo { 
 }
 
-.logo-header h1 {
+.cs_header_logo h1 {
 	font-family: 'Bree Serif', serif;
 	font-weight: 300;
 	font-size: 24px;
@@ -49,7 +49,7 @@ body {
 	margin-bottom: 10px;	
 }
 
-.logo-header p {
+.cs_header_logo p {
 	font-size: 11px;
 	line-height: 16px;
 	color: #678889;
@@ -61,7 +61,7 @@ body {
 LOGIN FORM
 *******************/
 
-.login-form, .signin-form {
+.cs_form_login, .cs_form_signin {
 	width: 200px;
 	margin: 10px 10px 10px 50px;
 	position: relative;
@@ -80,11 +80,11 @@ LOGIN FORM
 LOGIN FORM HEADER
 *******************/
 
-.login-form .header,  .signin-form .header {
+.cs_form_login .cs_header_login,  .cs_form_signin .cs_header_signin {
 	padding: 10px 10px 10px 10px;
 }
 
-.login-form .header h1, .signin-form .header h1 {
+.cs_form_login .cs_header_login h1, .cs_form_signin .cs_header_signin h1 {
 	font-family: 'Bree Serif', serif;
 	font-weight: 300;
 	font-size: 18px;
@@ -94,7 +94,7 @@ LOGIN FORM HEADER
 	margin-bottom: 5px;
 }
 
-.login-form .header span, .signin-form .header span {
+.cs_form_login .cs_header_login span, .cs_form_signin .cs_header_signin span {
 	font-size: 11px;
 	line-height: 16px;
 	color: #678889;
@@ -102,15 +102,18 @@ LOGIN FORM HEADER
 }
 
 /*******************
-LOGIN FORM CONTENT
+LOGIN and SINGIN FORM CONTENT
 *******************/
 
-.login-form .content, .signin-form .content {
+.cs_form_login .cs_content_login, .cs_form_signin .cs_content_signin {
 	padding: 0 15px 10px 25px;
 }
 
 /* Input field */
-.login-form .content .text-input, .signin-form .content .text-input {
+.cs_form_login .cs_content_login .cs_text_usermail,
+.cs_form_login .cs_content_login .cs_text_password,
+.cs_form_signin .cs_content_signin .cs_text_usermail,
+.cs_form_signin .cs_content_signin .cs_text_password {
 	width: 135px;
 	padding: 10px 10px;
 	
@@ -134,16 +137,19 @@ LOGIN FORM CONTENT
 }
 
 /* Second input field */
-.login-form .content .password, .login-form .content .pass-icon {
+.cs_form_login .cs_content_login .cs_text_password, 
+.cs_form_login .cs_content_login .cs_pass_icon {
 	margin-top: 5px;
 }
 
-.login-form .content .text-input:hover {
+.cs_form_login .cs_content_login .cs_text_usermail:hover,
+.cs_form_login .cs_content_login .cs_text_password:hover {
 	background: #dfe9ec;
 	color: #414848;
 }
 
-.login-form .content .text-input:focus {
+.cs_form_login .cs_content_login .cs_text_usermail:focus,
+.cs_form_login .cs_content_login .cs_text_password:focus {
 	background: #dfe9ec;
 	color: #414848;
 	
@@ -153,7 +159,7 @@ LOGIN FORM CONTENT
 }
 
 
-.user-icon, .pass-icon {
+.cs_user_icon, .cs_pass_icon {
 	width: 36px;
 	height: 37px;
 	display: block;
@@ -168,18 +174,19 @@ LOGIN FORM CONTENT
 	-webkit-border-bottom-left-radius: 5px;
 }
 
-.user-icon {
+.cs_user_icon {
 	top:89px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
 	background: rgba(65,72,72,0.75) url(../images/user-icon.png) no-repeat center;	
 }
 
-.pass-icon {
+.cs_pass_icon {
 	top:132px;
 	background: rgba(65,72,72,0.75) url(../images/pass-icon.png) no-repeat center;
 }
 
 /* Animation */
-.text-input, .user-icon, .pass-icon, .button, .register, .create, .cancel {
+.cs_text_usermail, .cs_text_password, .cs_user_icon, .cs_pass_icon,
+.cs_button_login, .cs_button_register, .cs_button_signin_create, .cs_button_signin_cancel {
 	transition: all 0.5s;
 	-moz-transition: all 0.5s;
 	-webkit-transition: all 0.5s;
@@ -189,10 +196,11 @@ LOGIN FORM CONTENT
 
 
 /*******************
-LOGIN FORM FOOTER
+LOGIN and SIGNIN FORM FOOTER
 *******************/
 
-.login-form .footer, .signin-form .footer {
+.cs_form_login .cs_footer_login, 
+.cs_form_signin .cs_footer_signin {
 	padding: 10px 10px 10px 10px;
 	overflow: auto;
 	
@@ -205,7 +213,8 @@ LOGIN FORM FOOTER
 }
 
 /* Login button */
-.login-form .footer .button, .signin-form .footer .create {
+.cs_form_login .cs_footer_login .cs_button_login,
+.cs_form_signin .cs_footer_signin .cs_button_signin_create {
 	float:right;
 	padding: 10px;
 	
@@ -225,7 +234,7 @@ LOGIN FORM FOOTER
 	-webkit-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
 }
 
-.signin-form .footer .cancel {
+.cs_form_signin .cs_footer_signin .cs_button_signin_cancel {
 	padding: 10px;
 	
 	font-family: 'Bree Serif', serif;
@@ -244,7 +253,8 @@ LOGIN FORM FOOTER
 	-webkit-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
 }
 
-.login-form .footer .button:hover, .signin-form .footer .create:hover {
+.cs_form_login .cs_footer_login .cs_button_login:hover, 
+.cs_form_signin .cs_footer_signin .cs_button_signin_create:hover {
 	background: #3f9db8;
 	border: 1px solid rgba(256,256,256,0.75);
 	
@@ -253,7 +263,7 @@ LOGIN FORM FOOTER
 	-webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
 }
 
-.signin-form .footer .cancel:hover {
+.cs_form_signin .cs_footer_signin .cs_button_signin_cancel:hover {
 	background: #BF2424;
 	border: 1px solid rgba(256,256,256,0.75);
 	
@@ -262,7 +272,8 @@ LOGIN FORM FOOTER
 	-webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);	
 }
 
-.login-form .footer .button:focus, .signin-form .footer .create:focus{
+.cs_form_login .cs_footer_login .cs_button_login:focus,
+.cs_form_signin .cs_footer_signin .cs_button_signin_create:focus{
 	position: relative;
 	bottom: -1px;
 	
@@ -274,7 +285,7 @@ LOGIN FORM FOOTER
 }
 
 /* Register button */
-.login-form .footer .register {
+.cs_form_login .cs_footer_login .cs_button_register {
 	display: block;
 	float: right;
 	padding: 10px;
@@ -291,11 +302,11 @@ LOGIN FORM FOOTER
 	text-shadow: 0px 1px 0 rgba(256,256,256,0.5);
 }
 
-.login-form .footer .register:hover {
+.cs_form_login .cs_footer_login .cs_button_register:hover {
 	color: #3f9db8;
 }
 
-.login-form .footer .register:focus {
+.cs_form_login .cs_footer_login .cs_button_register:focus {
 	position: relative;
 	bottom: -1px;
 }

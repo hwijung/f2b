@@ -12,82 +12,71 @@
 
 		<script type="text/javascript">
 			function clean_up_login_form ()	{
-				$("#usermail").focus ().val ("");
-				$("#password").val ("");
-			}
-  
+				$("#id_text_login_usermail").focus ().val ("");
+				$("#id_text_login_password").val ("");
+			}  
   
 			function clean_up_fb_account_form () {
-				$("#fb_name").val ( "" );
+				$("#id_text_fb_name").val ( "" );
 			}
 
 			function fill_fb_account_form ( fb_name ) {
 				if ( fb_name == null )	{
 					$.get ( 'fb.php', null, function ( result ) {
-						$("#fb_name").val ( result['fb_name'] );
+						$("#id_text_fb_name").val ( result['fb_name'] );
 					}, 'json' );
 				} else {
-					$("#fb_name").val ( fb_name );
+					$("#id_text_fb_name").val ( fb_name );
 				}
 			}
 
 			function clean_up_wp_account_form () {
-				$("#wp_address").val ( "" );
-				$("#wp_id").val ( "" );
-				$("#wp_password").val ( "" );				
+				$("#id_text_wp_id").val ( "" );
+				$("#id_text_wp_address").val ( "" );
+				$("#id_text_wp_password").val ( "" );				
 			}  
  
 			function fill_wp_account_form () {
 				$.get ( 'wp.php', null, function ( result ) {
-					$("#wp_address").val ( result['wp_address'] );
-					$("#wp_id").val ( result['wp_id'] );
-					$("#wp_password").val ( result['wp_password'] );
-					$("#wp_account_form input").attr( 'disabled', 'true' );
+					$("#id_text_wp_address").val ( result['wp_address'] );
+					$("#id_text_wp_id").val ( result['wp_id'] );
+					$("#id_text_wp_password").val ( result['wp_password'] );
+					$("#id_form_wp_account input").attr( 'disabled', 'true' );
 				}, 'json' );
 			}
 			
 			$(document).ready ( function () {
 
 				// Login form animation
-				$(".username").focus(function() { 
-					$(".user-icon").css("left","12px");
+				$(".cs_text_usermail").focus(function() { 
+					$(".cs_user_icon").css("left","12px");
 				});
-				$(".username").blur(function() {
-					$(".user-icon").css("left","50px");
+				$(".cs_text_usermail").blur(function() {
+					$(".cs_user_icon").css("left","50px");
 				});
 	
-				$(".password").focus(function() {
-					$(".pass-icon").css("left","12px");
+				$(".cs_text_password").focus(function() {
+					$(".cs_pass_icon").css("left","12px");
 				});
-				$(".password").blur(function() {
-					$(".pass-icon").css("left","50px");
+				$(".cs_text_password").blur(function() {
+					$(".cs_pass_icon").css("left","50px");
 				});
 
-				$("#btn-login-register").click ( function () {
-					$("#signin-form").fadeIn ( 'slow' );
+				$("#id_button_register").click ( function () {
+					$("#id_form_signin").fadeIn ( 'slow' );
 				} );
 
-				$("#btn-signin-cancel").click ( function () {
-					$("#signin-form").fadeOut ( 'slow' );
+				$("#id_button_signin_cancel").click ( function () {
+					$("#id_form_signin").fadeOut ( 'slow' );
 				});
-
-				$("#btn_signin").click ( function ()	{
-					if ( "none" == $("#signin_form").css ( "display" ) )	{
-						$("#signin_form").show ( 200 );
-						$("#btn_signin").html ( "Close" );
-					} else {
-						$("#signin_form").hide ( 200 );
-						$("#btn_signin").html ( "Sign In" );
-					}
-				} );
 
 				// When login button clicked 
-				$("#btn-login").click ( function ()	{
-					$.post ( 'login.php', { usermail: $("#usermail").val (), password: $("#password").val () } , function ( result ) {
+				$("#id_button_login").click ( function ()	{
+					$.post ( 'login.php', { usermail: $("#id_text_login_usermail").val (), password: $("#id_text_login_password").val () } , function ( result ) {
 							if ( result )	{
 								// login success
-								$("#usermail").addClass ( "loggedin" ).attr ( "disabled", "true" );
-								$("#password").addClass ( "loggedin" ).attr ( "disabled", "true" );
+								$("#id_text_login_usermail").addClass ( "loggedin" ).attr ( "disabled", "true" );
+								$("#id_text_login_password").addClass ( "loggedin" ).attr ( "disabled", "true" );
 
 								// update forms
 								fill_fb_account_form ();
@@ -103,8 +92,8 @@
 				});
 
 				// When sign in button clicked
-				$("#signin_form").submit ( function ()	{
-					$.post ( 'signin.php', $("#signin_form").serialize(),
+				$("#id_button_signin_create").click ( function ()	{
+					$.post ( 'signin.php', { usermail: $("#id_text_signin_usermail").val (), password: $("#id_text_signin_password").val () },
 						function ( result ) {
 							if ( result )	{
 								alert ( 'sign in success!' );
@@ -142,7 +131,7 @@
 				});*/
 
 				// When fb Login button clicked
-				$("#btn_login_fb_account").click ( function ()	{
+				$("#id_button_login_fb_account").click ( function ()	{
 					var result = window.showModalDialog ( "./fbaccess.php");
 					if ( result )	{
 						alert ( result );
@@ -150,16 +139,16 @@
 				});
 
 				// When wp edit button clicked
-				$("#btn_edit_wp_account").click ( function () {
-					$("#wp_account_form input").removeAttr( 'disabled' );
+				$("#id_button_edit_wp_account").click ( function () {
+					$("#id_form_wp_account input").removeAttr( 'disabled' );
 				});
 
 				// When wp save button clicked
-				$("#wp_account_form").submit ( function () {
-					var post_variables = $("#wp_account_form").serialize ();
+				$("#id_form_wp_account").submit ( function () {
+					var post_variables = $("#id_form_wp_account").serialize ();
 					$.post ( 'wp.php', post_variables, function ( result ) {
 						if (  result ) {
-							$("#wp_account_form input").attr( 'disabled', 'true' );
+							$("#id_form_wp_account input").attr( 'disabled', 'true' );
 						}
 					}, 'json' );
 					return false;	
@@ -187,8 +176,8 @@
 		   		</div>
 		 	   		
 		  		<div class="cs_content_login">
-					<input id="id_text_usermail" name="nm_text_usermail" type="text" class="cs_input_text" value="Username" />
-				    <input id="id_text_password" name="nm_text_password" type="password" class="cs_input_text" value="Password" />
+					<input id="id_text_login_usermail" name="nm_text_usermail" type="text" class="cs_text_usermail" value="Username" />
+				    <input id="id_text_login_password" name="nm_text_password" type="password" class="cs_text_password" value="Password" />
 				</div>
 					    
 				<!--FOOTER-->
@@ -204,9 +193,9 @@
 		   			<span>create new account.</span>
 		   		</div>
 		   		<div class="cs_content_signin">
-		 	   		<input name="nm_text_usermail" type="text" class="cs_input_text" value="Type new name" />
-		 	   		<input name="nm_text_password" type="text" class="cs_input_text" value="Type password" />
-		 	   		<input name="mn_text_password_confirm" type="text" class="cs_input_text" value="Re-type password" />
+		 	   		<input id="id_text_signin_usermail" name="nm_text_usermail" type="text" class="cs_text_usermail" value="Type new name" />
+		 	   		<input id="id_text_signin_password" name="nm_text_password" type="text" class="cs_text_password" value="Type password" />
+		 	   		<input id="id_text_signin_password_confirm" name="mn_text_password_confirm" type="text" class="cs_text_password" value="Re-type password" />
 			   	</div>
 
 			   	<div class="cs_footer_signin">
@@ -215,45 +204,6 @@
 			   	</div>
 		 	</form>
 		</div>
-
-
-		<!-- log in and its related elements -->
-		<!--
-		<div id="contents-area">
-			<div>
-				<section class="login_section" id="login_section" >
-					
-					<form name="login" id="login_form" accept-charset="utf-8">
-						<label>E-Mail</label>
-						<input id="usermail" type="email" name="usermail"  required>
-						<label>Password</label>
-						<input id="password" type="password" name="password"  equired>
-						<input type="submit" value="Login">
-					</form>
-
-			
-					<div id="loggedin_status_div" >
-						<label id="loggedin_id">You are logged in</label>
-						<button id="btn_logout">Log out</button>
-					</div>
-
-					<button id="btn_signin" value="Signin">Sign In</button>
-				</section>
-
-				<section class="signin_section" id="signin_section">
-					<form name="signin" id="signin_form" accept-charset="utf-8">
-						<p>Create new accounts</p>
-						<label>E-Mail</label>
-						<input type="email" name="usermail" required>
-						<label for="password">Password</label>
-						<input type="password" name="password" required>		
-						<label>Password Confirm</label>
-						<input type="password" name="password_confirm" required>
-						<input type="submit" value="Create Account">	
-					</form>
-				</section>
-			</div>
-			-->
 
 		<!-- Edit settings -->
 		<h3>Your settings</h3>
