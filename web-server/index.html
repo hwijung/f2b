@@ -8,9 +8,28 @@
 		<link href="./css/main.css" rel="stylesheet" type="text/css">
 		<link href="./css/style.css" rel="stylesheet" type="text/css">
  
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script> 
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+   		<script type="text/javascript">
+   			function show_message ( title, msg ) {
+   				$("#id_notification_bar_title").html ( title );
+   				$("#id_notification_bar_message").html ( msg );
 
-		<script type="text/javascript">
+   				$("#id_notification_bar").fadeIn ( 300, function () {
+   					$("#id_notification_bar").fadeTo ( 2000, 0.9, function () {
+   						$("#id_notification_bar").fadeOut ( 1000 ) ;  }  )  } );
+   			}
+
+   			function switch_login_logout_button ( flag )	{
+   				if ( flag ) {
+   					$("#id_button_login").hide ();
+   					$("#id_button_logout").show ();
+   				} else {
+      				$("#id_button_logout").hide ();
+   					$("#id_button_login").show ();					
+   				}
+   			}
+
 			function clean_up_login_form ()	{
 				$("#id_text_login_usermail").focus ().val ("");
 				$("#id_text_login_password").val ("");
@@ -72,6 +91,7 @@
 
 				// When login button clicked 
 				$("#id_button_login").click ( function ()	{
+	
 					$.post ( 'login.php', { usermail: $("#id_text_login_usermail").val (), password: $("#id_text_login_password").val () } , function ( result ) {
 							if ( result )	{
 								// login success
@@ -82,6 +102,9 @@
 								fill_fb_account_form ();
 								fill_wp_account_form ();
 
+								switch_login_logout_button ( true );
+
+								show_message ( "Login success", "You are successfully logged in to the service." );
 							} else {
 								alert ( 'login failure' );
 							}
@@ -91,28 +114,32 @@
 					return false;
 				});
 
+				// When logout button clicked
+				$("#id_button_logout").click ( function () {
+					$.post ( 'logout.php' );
+					$("#id_text_login_usermail").removeClass ( "loggedin" ).removeAttr ( "disabled" );
+					$("#id_text_login_password").removeClass ( "loggedin" ).removeAttr ( "disabled" );
+
+					clean_up_login_form ();
+					clean_up_wp_account_form ();
+					clean_up_fb_account_form ();	
+
+					switch_login_logout_button ( false );
+
+					show_message ( "Logout success", "You are successfully logged out." );		
+				});
+
 				// When sign in button clicked
 				$("#id_button_signin_create").click ( function ()	{
 					$.post ( 'signin.php', { usermail: $("#id_text_signin_usermail").val (), password: $("#id_text_signin_password").val () },
 						function ( result ) {
 							if ( result )	{
-								alert ( 'sign in success!' );
+								show_message ( "Account Created", "Your account is ready. Please login with your account information." );		
 							}
 						}, 'json' );
 
 					// update for signin failure
 					return false;
-				});
-
-				// When logout button clicked
-				$("#btn_logout").click ( function () {
-					$.post ( 'logout.php' );
-					$("#login_section").removeClass ( "login_success" );
-					$("#loggedin_status_div").removeClass ( "login_success" );
-
-					clean_up_login_form ();
-					clean_up_wp_account_form ();
-					clean_up_fb_account_form ();
 				});
 
 				// When fb edit button clicked
@@ -164,6 +191,11 @@
 			<p>This service write daily summerize of your Facebook account.</p>
 		</header>
 
+		<div id="id_notification_bar" hidden="true">
+			<h1 id="id_notification_bar_title"></h1> 
+			<p id="id_notification_bar_message"></p>
+		</div>
+
 		<div id="id_sidebar">
 			<!--SLIDE-IN ICONS-->
 		   <div class="cs_user_icon"></div>
@@ -182,8 +214,9 @@
 					    
 				<!--FOOTER-->
 				<div class="cs_footer_login">
-					<input id="id_button_login" type="button" name="submit" value="Login" class="cs_button_login" />
-				    <input id="id_button_register" type="button" name="submit" value="Register" class="cs_button_register" />
+				    <input id="id_button_register" type="button" name="submit" value="Register" class="cs_button_register" />					
+					<input id="id_button_login" action="" type="button" name="submit" value="Login" class="cs_button_login" />
+					<input id="id_button_logout" action="" type="button" name="logout" value="Logout" class="cs_button_logout" hidden= "true"/>
 				</div>
 		   	</form>
 
@@ -194,8 +227,8 @@
 		   		</div>
 		   		<div class="cs_content_signin">
 		 	   		<input id="id_text_signin_usermail" name="nm_text_usermail" type="text" class="cs_text_usermail" value="Type new name" />
-		 	   		<input id="id_text_signin_password" name="nm_text_password" type="text" class="cs_text_password" value="Type password" />
-		 	   		<input id="id_text_signin_password_confirm" name="mn_text_password_confirm" type="text" class="cs_text_password" value="Re-type password" />
+		 	   		<input id="id_text_signin_password" name="nm_text_password" type="password" class="cs_text_password" value="Type password" />
+		 	   		<input id="id_text_signin_password_confirm" name="mn_text_password_confirm" type="password" class="cs_text_password" value="Re-type password" />
 			   	</div>
 
 			   	<div class="cs_footer_signin">
@@ -210,43 +243,45 @@
 			<h1>Your settings</h1>
 
 			<div id="id_settings_accounts" class="cs_settings_accounts">
-				<h4> Accounts </h4>
+				<h2> Accounts </h2>
 				
+				<h3>Facebook account</h3>
+				<p>Click the login button below and type your facebook username and password. Access key for your facebook contents will be issued ans we save it associated with your F2B service accounts. </p>
 				<form id="id_form_accounts" accept-charset="utf-8">
-					<label>Facebook account:</label>
-					<button id="id_button_login_fb_account">Login</button>
 					<label>Facebook ID</label>
-					<input type="text" id="id_text_fb_name" name="nm_text_fb_name" required disabled>
+					<input type="text" id="id_text_fb_name" name="nm_text_fb_name" class="cs_text_settings" required disabled>
+					<button id="id_button_login_fb_account" class="cs_button_login_fb_account">Login</button>
 				</form>
 					
-				<label>Wordpress account:</label>
-				<button id="id_button_edit_wp_account">Edit</button>
-
+				<h3>Wordpress account</h3>
+				<p>Click Edit button and input your wordpress account information. F2B service logged in your authorization schemes everyday. </p>
 				<form id="id_form_wp_account" accept-charset="utf-8">
-					<label>Address</label>
-					<input type="text" id="id_text_wp_address" name="nm_wp_address" required disabled>
+					<label>Wordpress URI</label>
+					<input type="text" id="id_text_wp_address" name="nm_wp_address" class="cs_text_settings" required disabled><br/>
 					<label>User ID</label>
-					<input type="text" id="id_text_wp_id" name="nm_wp_id" required disabled>
+					<input type="text" id="id_text_wp_id" name="nm_wp_id" class="cs_text_settings" required disabled><br/>
 					<label>Password</label>
-					<input type="password" id="id_text_wp_password" name="nm_wp_password" required disabled>
-					<input type="submit" value="Save" disabled>
+					<input type="password" id="id_text_wp_password" name="nm_wp_password" class="cs_text_settings" required disabled><br/>
+					<button id="id_button_edit_wp_account">Edit</button>
+					<button id="id_button_save_wp_account" disabled>Save</button>
 				</form>
 			</div>
 
 			<div id="id_settings_publishing" class="cs_settings_publishing">
-				<h4> Publishing </h4>
+				<h2> Publishing </h2>
 				<button id="id_button_activate">Activate</button>
 				<button id="id_button_deactivate">Deactivate</button>
 			</div>
 
 			<div id="id_settings_templates" class="cs_settings_templates">
-				<h4> Templates </h4>
-				<textarea>some texts here..</textarea>
+				<h2> Templates </h2>
+				<textarea width="300px" height="100px"> { Hello [# INSERT HERE #] }</textarea>
 				<button id="id_button_save_template">Save</button>
 			</div>
 		</div>
 
 		<footer>
+			<div id="id_footer_line"></div>
 			<nav>
       			<p>
       				<a href="/credits.html">Credits</a> —

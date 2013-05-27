@@ -37,7 +37,8 @@ body {
 
 /* Logo - Header */
 .cs_header_logo {
-
+	margin-left: 50px;
+	margin-top: 20px;
 }
 
 .cs_header_logo #id_header_logo { 
@@ -60,13 +61,49 @@ body {
 	text-shadow: 1px 1px 0 rgba(256,256,256,1.0);
 }
 
+/*******************
+NOTIFICATION BAR
+*******************/
+#id_notification_bar {
+	position: absolute;
+	top: 10px;
+	left:20%;
+	width:60%;
+	height: 45px;
+	background-color: #f3f3f3;
+	box-shadow: 0px 8px 10px #666666;
+	text-align: center;
+	opacity: 0.9;
+	border-radius: 4px;
+}
+
+#id_notification_bar h1 {
+	font-family: 'Bree Serif', serif;
+	font-weight: 300;
+	font-size: 16px;
+	line-height:16px;
+	color: #414848;
+	text-shadow: 1px 1px 0 rgba(256,256,256,1.0);
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#id_notification_bar p {
+	margin-top: 3px;
+	margin-bottom: 5px;
+	font-size: 11px;
+	line-height: 16px;
+	color: #678889;
+	text-shadow: 1px 1px 0 rgba(256,256,256,1.0);		
+}
+
 
 /*******************
 LOGIN FORM
 *******************/
 
 .cs_form_login, .cs_form_signin {
-	width: 200px;
+	width: 220px;
 	margin: 10px 10px 10px 50px;
 	position: relative;
 	z-index:5;
@@ -179,18 +216,19 @@ LOGIN and SINGIN FORM CONTENT
 }
 
 .cs_user_icon {
-	top:89px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
+	top:130px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
 	background: rgba(65,72,72,0.75) url(../images/user-icon.png) no-repeat center;	
 }
 
 .cs_pass_icon {
-	top:132px;
+	top:182px;
 	background: rgba(65,72,72,0.75) url(../images/pass-icon.png) no-repeat center;
 }
 
 /* Animation */
 .cs_text_usermail, .cs_text_password, .cs_user_icon, .cs_pass_icon,
-.cs_button_login, .cs_button_register, .cs_button_signin_create, .cs_button_signin_cancel {
+.cs_button_login, .cs_button_register, .cs_button_signin_create, 
+.cs_button_signin_cancel, .cs_button_logout {
 	transition: all 0.5s;
 	-moz-transition: all 0.5s;
 	-webkit-transition: all 0.5s;
@@ -238,7 +276,8 @@ LOGIN and SIGNIN FORM FOOTER
 	-webkit-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
 }
 
-.cs_form_signin .cs_footer_signin .cs_button_signin_cancel {
+.cs_form_signin .cs_footer_signin .cs_button_signin_cancel, 
+.cs_form_login .cs_footer_login .cs_button_logout {
 	padding: 10px;
 	
 	font-family: 'Bree Serif', serif;
@@ -267,7 +306,8 @@ LOGIN and SIGNIN FORM FOOTER
 	-webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
 }
 
-.cs_form_signin .cs_footer_signin .cs_button_signin_cancel:hover {
+.cs_form_signin .cs_footer_signin .cs_button_signin_cancel:hover,
+.cs_form_login .cs_footer_login .cs_button_logout:hover {
 	background: #BF2424;
 	border: 1px solid rgba(256,256,256,0.75);
 	
@@ -291,7 +331,7 @@ LOGIN and SIGNIN FORM FOOTER
 /* Register button */
 .cs_form_login .cs_footer_login .cs_button_register {
 	display: block;
-	float: right;
+	float: left;
 	padding: 10px;
 	margin-right: 20px;
 	
@@ -322,6 +362,8 @@ SETINGS DIV
 .cs_settings {
 	width: 600px;
 	margin: 10px 10px 10px 50px;
+	padding: 10px 10px 10px 10px;
+
 	position: relative;
 	z-index:5;
 	
@@ -353,17 +395,103 @@ SETINGS DIV
 	line-height:18px;
 	color: #414848;
 	text-shadow: 1px 1px 0 rgba(256,256,256,1.0);
-	margin-bottom: 5px;	
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+.cs_settings h2 {
+	font_family: 'Bree Serif', serif;
+	font-weight: 250;
+	font-size: 15px;
+	line-height: 15px;
+	color: #414848;
+	margin-left: 10px;
+	margin-top: 20px;
+}
+
+.cs_settings h3 {
+	font_family: 'Bree Serif', serif;
+	font-weight: 250;
+	font-size: 12px;
+	line-height: 12px;
+	color: #414848;
+	margin-left: 10px;
+	margin-top: 5px;
+}
+
+.cs_settings label {
+	font_family: 'Bree Serif', serif;
+	font-size: 12px;
+	line-height: 12px;
+	font-weight: 800;
+}
+
+.cs_settings .cs_text_settings {
+	padding: 2px 2px;
+	
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-weight: 400;
+	font-size: 12px;
+	color: #9d9e9e;
+	text-shadow: 1px 1px 0 rgba(256,256,256,1.0);
+	
+	background: #fff;
+	border: 1px solid #fff;
+	border-radius: 5px;
+	
+	box-shadow: inset 0 1px 3px rgba(0,0,0,0.50);
+	-moz-box-shadow: inset 0 1px 3px rgba(0,0,0,0.50);
+	-webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,0.50);
+}
+
+.cs_settings form {
+	margin-left: 20px;
+}
+
+.cs_settings button {
+	padding: 1px;
+	
+	font-family: 'Bree Serif', serif;
+	font-weight: 300;
+	font-size: 12px;
+	color: #fff;
+	text-shadow: 0px 1px 0 rgba(0,0,0,0.25);
+	
+	background: #56c2e1;
+	border: 1px solid #46b3d3;
+	border-radius: 4px;
+	cursor: pointer;
+	
+	box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
+	-moz-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
+	-webkit-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
+}
+
+.cs_settings p {
+	margin-left: 20px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-size: 11px;
+	line-height: 16px;
+	color: #678889;
+	text-shadow: 1px 1px 0 rgba(256,256,256,1.0);	
 }
 
 /*******************
 FOOTER
 *******************/
 footer {
+	margin-left: 50px;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	height: 30px;
+}
+
+footer #id_footer_line {
+	width: 900px;
+	height: 1px;
+	background-color: #678889;
 }
 
 footer p {
