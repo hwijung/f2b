@@ -67,6 +67,8 @@
 			function fill_wp_account_form () {
 				$.get ( 'wp.php', null, function ( result ) {
 					$("#id_text_wp_address").val ( result[0]['wp_address'] );
+					$("#id_text_wp_hostname").val ( result[0]['wp_hostname'] );
+					$("#id_text_wp_apipath").val ( result[0]['wp_apipath'] );
 					$("#id_text_wp_id").val ( result[0]['wp_id'] );
 					$("#id_text_wp_password").val ( result[0]['wp_password'] );
 					$("#id_form_wp_account input").attr( 'disabled', 'true' );
@@ -296,8 +298,12 @@
 				<form id="id_form_wp_account" accept-charset="utf-8">
 					<button id="id_button_edit_wp_account" type="button" disabled>Edit</button>
 					<button id="id_button_save_wp_account" disabled>Save</button><br/>
-					<label>Wordpress URI</label>
+					<label>Blog Address</label>
 					<input type="text" id="id_text_wp_address" name="nm_wp_address" class="cs_text_settings" style="display:inline-block;width: 400px;" required disabled><br/>
+					<label>Host Name</label>
+					<input type="text" id="id_text_wp_hostname" name="nm_wp_hostname" class="cs_text_settings" style="display:inline-block;width: 400px;" required disabled><br/>
+					<label>API Path </label>
+					<input type="text" id="id_text_wp_apipath" name="nm_wp_apipath" class="cs_text_settings" style="display:inline-block;width: 400px;" required disabled><br/>					
 					<label>User ID</label>
 					<input type="text" id="id_text_wp_id" name="nm_wp_id" class="cs_text_settings" required disabled><br/>
 					<label>Password</label>

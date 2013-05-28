@@ -3,7 +3,7 @@
 		// Create PDO Connection
 		$config['dbconnect'] = array (
 				'host' => 'localhost',
-				'dbname' => 'f2w',
+				'dbname' => 'f2b',
 				'username' => 'root',
 				'password' => '!qazxsw2'
 			);

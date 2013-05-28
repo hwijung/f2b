@@ -1,5 +1,5 @@
-CREATE DATABASE f2w;
-use f2w;
+CREATE DATABASE f2b;
+use f2b;
  
 CREATE TABLE user
 (
@@ -21,6 +21,8 @@ CREATE TABLE wp_account
 (
 	user varchar(255) NOT NULL,
 	wp_address varchar(255) NOT NULL,
+	wp_hostname varchar(255) NOT NULL,
+	wp_apipath varchar(255) NOT NULL,
 	wp_id varchar(255) NOT NULL,
 	wp_password varchar(255) NOT NULL,
 	PRIMARY KEY (user)

@@ -13,10 +13,12 @@
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) 	{
 
 			$wp_address = $_POST['nm_wp_address'];
+			$wp_hostname = $_POST['nm_wp_hostname'];
+			$wp_apipath = $_POST['nm_wp_apipath'];
 			$wp_id = $_POST['nm_wp_id'];
 			$wp_password = $_POST['nm_wp_password'];
 				
-			$query = "REPLACE INTO wp_account SET user='$user', wp_address='$wp_address', wp_id='$wp_id', wp_password='$wp_password'";
+			$query = "REPLACE INTO wp_account SET user='$user', wp_address='$wp_address', wp_hostname='$wp_hostname', wp_apipath='$wp_apipath', wp_id='$wp_id', wp_password='$wp_password'";
 				
 			$sth = $db->query ( $query );
 

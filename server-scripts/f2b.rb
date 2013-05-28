@@ -2,7 +2,7 @@ require 'rubygems'
 require 'koala'
 require 'unicode'
 require 'rmetaweblog'
-require 'mysql'
+require 'mysql2'
 
 # Command-line arguments
 @username = ARGV[0];
@@ -13,29 +13,36 @@ require 'mysql'
 
 # Blog information for test purpose
 @blog_hostname = "www.linus.pe.kr"
-@blog_api_path = "/xmlrpc.php"
-@blog_url = "http://www.linus.pe.kr/home/wordpress"
+@blog_api_path = "/home/wordpress/xmlrpc.php"
+@blog_url = "http://www.linus.pe.kr/home/wordpress/"
 @blog_id = "hwijung"
-@blog_password = "!qazxsw2"
+@blog_password = "q1234567"
 @category = [ "Daily Life" ]
 @time_locale = 9
 @facebook_name = "hwijung.ryu"
  
 @yesterday = Date.today - 1;
 
-#initialize 
+# initialize 
 # @graph = Koala::Facebook::API.new("AAACEdEose0cBAKVZCYHkZB42VwI5JJDLfZAXpz0J6fka0Hto10R4zNlbEETd2Lxo5UvKk94EGnMedxh06tgZCo8v0B5YjTC2awNOj46fVAZDZD");
-@db_con = Mysql.new 'localhost', 'root', '!qazxsw2'
-rs = @db_con.query 'use f2w'
-rs = @db_con.query 'SELECT * FROM fb_account'
-puts rs.fetch_row
+
+# MySQL Database Connection
+@db_con = Mysql2::Client.new( :host=>'localhost', :username=>'root', :password=>'!qazxsw2' )
+@db_con.query 'use f2b'
+results = @db_con.query( 'SELECT * FROM wp_account WHERE user = "' + @username + '"', :as=>'hash' )
+
+results.each(:as => :hash) do |row| 
+	# TODO : set up account 
+	row['user']
+end
+
 
 # Create Blog Object
-# @blog = RMetaWebLog.new(@blog_hostname, @blog_api_path, {
-#	:blog_url => @blog_url,
-#	:blog_id => "1111",
-#	:api_user => @blog_id,
-#	:api_pass => @blog_password } )
+@blog = RMetaWebLog.new(@blog_hostname, @blog_api_path, {
+	:blog_url => @blog_url,
+	:blog_id => "1111",
+	:api_user => @blog_id,
+ 	:api_pass => @blog_password } )
 
 # Text to HTML Link
 # @generic_URL_regexp = Regexp.new( '(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
