@@ -1,6 +1,6 @@
 CREATE DATABASE f2w;
 use f2w;
-
+ 
 CREATE TABLE user
 (
 	user varchar(255) NOT NULL,
