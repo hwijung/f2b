@@ -196,9 +196,8 @@
 				// When fb Login button clicked
 				$("#id_button_login_fb_account").click ( function ()	{
 					var result = window.showModalDialog ( "./fbaccess.php");
-					if ( result )	{
-						alert ( result );
-					}
+
+					return false;
 				});
 
 				// When wp edit button clicked

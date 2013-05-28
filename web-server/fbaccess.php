@@ -13,6 +13,7 @@
 		$appId = '159335287416086';
 		$secret = '02c7d1369768a0a602cac78caebce7d3';
 		$site_url = "http://211.51.13.118/f2b/fbaccess.php";
+		$logout_url = "http://211.51.13.118/f2b/fblogout.php";
 		$fb_name = '';
 
 		$facebook = new Facebook ( array ( 
@@ -24,7 +25,8 @@
 		// If a user already logged in
 		if ($fb_user) {
 			// Get logout URL
-			$logoutUrl = $facebook->getLogoutUrl();
+			$params = array ( 'next' => 'http://211.51.13.118/f2b/fblogout.php' );
+			$logoutUrl = $facebook->getLogoutUrl( $params );
 			$fb_access_token = $facebook->getAccessToken();
 
 			try {
@@ -75,6 +77,12 @@
 
 				window.close ();
 			}
+
+			function logout () {
+				var logout_url = "<?php echo $logoutUrl; ?>";
+
+				location.href = logout_url;
+			}
 		</script>
 
 	</head>
@@ -83,9 +91,11 @@
 	if ( $fb_user != null )  { 
 ?>
 	<h4> You are logged in as <?php echo $fb_name; ?></h4>
-	<input type="button" value="close" onclick="javascript:self_close ()"></input>
+	<input type="button" value="close" onclick="javascript:self_close ();"></input>
+	<input type="button" value="logout" onclick="javascript:logout ();"></input>
 <?php
 	} else {
+		header ( 'Location: ' . $loginUrl );
 ?>
 	<a href="<?php echo $loginUrl?>">Login with Facebook </a>
 <!--
