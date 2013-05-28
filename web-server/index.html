@@ -19,6 +19,15 @@
    					$("#id_notification_bar").fadeTo ( 2000, 0.9, function () {
    						$("#id_notification_bar").fadeOut ( 1000 ) ;  }  )  } );
    			}
+   			function switch_settings_availability ( flag ) {
+   				if ( flag ) {
+					$(".cs_settings button").removeAttr ( "disabled" );
+					$(".cs_settings textarea" ).removeAttr ( "disabled" );
+   				} else {
+   					$(".cs_settings button").attr ( "disabled", "true" );
+   					$(".cs_settings textarea" ).attr ( "disabled", "true");
+   				}
+   			}
 
    			function switch_login_logout_button ( flag )	{
    				if ( flag ) {
@@ -57,9 +66,9 @@
  
 			function fill_wp_account_form () {
 				$.get ( 'wp.php', null, function ( result ) {
-					$("#id_text_wp_address").val ( result['wp_address'] );
-					$("#id_text_wp_id").val ( result['wp_id'] );
-					$("#id_text_wp_password").val ( result['wp_password'] );
+					$("#id_text_wp_address").val ( result[0]['wp_address'] );
+					$("#id_text_wp_id").val ( result[0]['wp_id'] );
+					$("#id_text_wp_password").val ( result[0]['wp_password'] );
 					$("#id_form_wp_account input").attr( 'disabled', 'true' );
 				}, 'json' );
 			}
@@ -128,6 +137,7 @@
 								fill_wp_account_form ();
 
 								switch_login_logout_button ( true );
+								switch_settings_availability ( true );
 
 								show_message ( "Login success", "You are successfully logged in to the service." );
 							} else {
@@ -150,6 +160,7 @@
 					clean_up_fb_account_form ();	
 
 					switch_login_logout_button ( false );
+					switch_settings_availability ( false );
 
 					show_message ( "Logout success", "You are successfully logged out." );		
 				});
@@ -199,8 +210,11 @@
 				$("#id_form_wp_account").submit ( function () {
 					var post_variables = $("#id_form_wp_account").serialize ();
 					$.post ( 'wp.php', post_variables, function ( result ) {
-						if (  result ) {
+						if ( result['result_code'] == 0 ) {
+							show_message ( 'Saved', 'Wordpress account updated successfully.' );
 							$("#id_form_wp_account input").attr( 'disabled', 'true' );
+						} else {
+							show_message ( 'Save Failed', result['message'] );
 						}
 					}, 'json' );
 					return false;	
@@ -275,33 +289,33 @@
 				<form id="id_form_accounts" accept-charset="utf-8">
 					<label>Facebook ID</label>
 					<input type="text" id="id_text_fb_name" name="nm_text_fb_name" class="cs_text_settings" required disabled>
-					<button id="id_button_login_fb_account" class="cs_button_login_fb_account">Login</button>
+					<button id="id_button_login_fb_account" class="cs_button_login_fb_account" disabled>Login</button>
 				</form>
 					
 				<h3>Wordpress account</h3>
 				<p>Click Edit button and input your wordpress account information. F2B service logged in your authorization schemes everyday. </p>
 				<form id="id_form_wp_account" accept-charset="utf-8">
+					<button id="id_button_edit_wp_account" type="button" disabled>Edit</button>
+					<button id="id_button_save_wp_account" disabled>Save</button><br/>
 					<label>Wordpress URI</label>
-					<input type="text" id="id_text_wp_address" name="nm_wp_address" class="cs_text_settings" required disabled><br/>
+					<input type="text" id="id_text_wp_address" name="nm_wp_address" class="cs_text_settings" style="display:inline-block;width: 400px;" required disabled><br/>
 					<label>User ID</label>
 					<input type="text" id="id_text_wp_id" name="nm_wp_id" class="cs_text_settings" required disabled><br/>
 					<label>Password</label>
 					<input type="password" id="id_text_wp_password" name="nm_wp_password" class="cs_text_settings" required disabled><br/>
-					<button id="id_button_edit_wp_account">Edit</button>
-					<button id="id_button_save_wp_account" disabled>Save</button>
 				</form>
 			</div>
 
 			<div id="id_settings_publishing" class="cs_settings_publishing">
 				<h2> Publishing </h2>
-				<button id="id_button_activate">Activate</button>
-				<button id="id_button_deactivate">Deactivate</button>
+				<button id="id_button_activate" disabled>Activate</button>
+				<button id="id_button_deactivate" disabled>Deactivate</button>
 			</div>
 
 			<div id="id_settings_templates" class="cs_settings_templates">
 				<h2> Templates </h2>
-				<textarea width="300px" height="100px"> { Hello [# INSERT HERE #] }</textarea>
-				<button id="id_button_save_template">Save</button>
+				<textarea width="300px" height="100px" disabled> { Hello [# INSERT HERE #] }</textarea>
+				<button id="id_button_save_template" disabled>Save</button>
 			</div>
 		</div>
 

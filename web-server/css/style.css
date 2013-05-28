@@ -428,11 +428,14 @@ SETINGS DIV
 	font-size: 12px;
 	line-height: 12px;
 	font-weight: 800;
+	width: 100px;
+	display: inline-block;
+	text-align: right;
 }
 
 .cs_settings .cs_text_settings {
 	padding: 2px 2px;
-	
+
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	font-weight: 400;
 	font-size: 12px;
@@ -446,6 +449,10 @@ SETINGS DIV
 	box-shadow: inset 0 1px 3px rgba(0,0,0,0.50);
 	-moz-box-shadow: inset 0 1px 3px rgba(0,0,0,0.50);
 	-webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,0.50);
+}
+
+.cs_settings input[disabled] {
+	background: #DDD !important;
 }
 
 .cs_settings form {
@@ -469,6 +476,11 @@ SETINGS DIV
 	box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
 	-moz-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
 	-webkit-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
+}
+
+.cs_settings button[disabled] {
+	background: #DDD;
+	border: 1px solid #CCC;
 }
 
 .cs_settings p {
@@ -503,4 +515,5 @@ footer p {
 	line-height: 16px;
 	color: #678889;
 	text-shadow: 1px 1px 0 rgba(256,256,256,1.0);	
+	padding: 0px 0px 5px 0px;
 }
