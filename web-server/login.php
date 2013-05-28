@@ -13,13 +13,13 @@
 		foreach ( $sth->fetchAll() as $row )	{
 			if ( md5($password) === $row['password'] )	{
 				$_SESSION['user'] = $user;
-				echo json_encode ( $row );
+				echo json_encode ( array ( 'result_code' => 0, $row ) );
 			} else {
-				exit;
+				echo json_encode ( array ( 'result_code' => 1, 'message' => 'No matching account' ) );
 			}
 		}
 	} else {
-		exit;
+		echo json_encode ( array ( 'result_code' => 2, 'message' => 'Invalid parameters' ) );
 	}
 ?>
 

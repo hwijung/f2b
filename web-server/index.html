@@ -9,7 +9,7 @@
 		<link href="./css/style.css" rel="stylesheet" type="text/css">
  
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
    		<script type="text/javascript">
    			function show_message ( title, msg ) {
    				$("#id_notification_bar_title").html ( title );
@@ -67,17 +67,23 @@
 			$(document).ready ( function () {
 
 				// Login form animation
-				$(".cs_text_usermail").focus(function() { 
+				$("#id_text_login_usermail").focus( function() { 
+					if ( $("#id_text_login_usermail").val () == 'Usermail' )	{
+						$("#id_text_login_usermail").val ('');
+					} 
 					$(".cs_user_icon").css("left","12px");
 				});
-				$(".cs_text_usermail").blur(function() {
+				$("#id_text_login_usermail").blur(function() {
 					$(".cs_user_icon").css("left","50px");
 				});
 	
-				$(".cs_text_password").focus(function() {
+				$("#id_text_login_password").focus(function() {
+					if ( $("#id_text_login_password").val () == 'Password' )	{
+						$("#id_text_login_password").val ( '' );
+					}
 					$(".cs_pass_icon").css("left","12px");
 				});
-				$(".cs_text_password").blur(function() {
+				$("#id_text_login_password").blur(function() {
 					$(".cs_pass_icon").css("left","50px");
 				});
 
@@ -89,11 +95,30 @@
 					$("#id_form_signin").fadeOut ( 'slow' );
 				});
 
+				// Signin form animation
+				$("#id_text_signin_usermail").focus ( function () {
+					if ( $("#id_text_signin_usermail").val () == 'Email address' ) {
+						$("#id_text_signin_usermail").val ( '' );
+					}
+				} );
+
+				$("#id_text_signin_password").focus ( function () {
+					if ( $("#id_text_signin_password").val () == 'password' ) {
+						$("#id_text_signin_password").val ( '' );
+					}
+				});
+
+				$("#id_text_signin_password_confirm").focus ( function () {
+					if ( $("#id_text_signin_password_confirm").val () == 'password' ) {
+						$("#id_text_signin_password_confirm").val ( '' );
+					}
+				});
+
 				// When login button clicked 
 				$("#id_button_login").click ( function ()	{
 	
 					$.post ( 'login.php', { usermail: $("#id_text_login_usermail").val (), password: $("#id_text_login_password").val () } , function ( result ) {
-							if ( result )	{
+							if ( result['result_code'] == 0 )	{
 								// login success
 								$("#id_text_login_usermail").addClass ( "loggedin" ).attr ( "disabled", "true" );
 								$("#id_text_login_password").addClass ( "loggedin" ).attr ( "disabled", "true" );
@@ -106,7 +131,7 @@
 
 								show_message ( "Login success", "You are successfully logged in to the service." );
 							} else {
-								alert ( 'login failure' );
+								show_message ( "Login failed", result['message'] );
 							}
 						}, 'json' );
 
@@ -208,7 +233,7 @@
 		   		</div>
 		 	   		
 		  		<div class="cs_content_login">
-					<input id="id_text_login_usermail" name="nm_text_usermail" type="text" class="cs_text_usermail" value="Username" />
+					<input id="id_text_login_usermail" name="nm_text_usermail" type="text" class="cs_text_usermail" value="Usermail" />
 				    <input id="id_text_login_password" name="nm_text_password" type="password" class="cs_text_password" value="Password" />
 				</div>
 					    
@@ -226,9 +251,9 @@
 		   			<span>create new account.</span>
 		   		</div>
 		   		<div class="cs_content_signin">
-		 	   		<input id="id_text_signin_usermail" name="nm_text_usermail" type="text" class="cs_text_usermail" value="Type new name" />
-		 	   		<input id="id_text_signin_password" name="nm_text_password" type="password" class="cs_text_password" value="Type password" />
-		 	   		<input id="id_text_signin_password_confirm" name="mn_text_password_confirm" type="password" class="cs_text_password" value="Re-type password" />
+		 	   		<input id="id_text_signin_usermail" name="nm_text_usermail" type="text" class="cs_text_usermail" value="Email address" />
+		 	   		<input id="id_text_signin_password" name="nm_text_password" type="password" class="cs_text_password" value="password" />
+		 	   		<input id="id_text_signin_password_confirm" name="mn_text_password_confirm" type="password" class="cs_text_password" value="password" />
 			   	</div>
 
 			   	<div class="cs_footer_signin">

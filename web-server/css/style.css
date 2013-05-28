@@ -155,7 +155,7 @@ LOGIN and SINGIN FORM CONTENT
 .cs_form_login .cs_content_login .cs_text_password,
 .cs_form_signin .cs_content_signin .cs_text_usermail,
 .cs_form_signin .cs_content_signin .cs_text_password {
-	width: 135px;
+	width: 150px;
 	padding: 10px 10px;
 	
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -184,13 +184,17 @@ LOGIN and SINGIN FORM CONTENT
 }
 
 .cs_form_login .cs_content_login .cs_text_usermail:hover,
-.cs_form_login .cs_content_login .cs_text_password:hover {
+.cs_form_login .cs_content_login .cs_text_password:hover, 
+.cs_form_signin .cs_content_signin .cs_text_usermail:hover,
+.cs_form_signin .cs_content_signin .cs_text_password:hover {
 	background: #dfe9ec;
 	color: #414848;
 }
 
 .cs_form_login .cs_content_login .cs_text_usermail:focus,
-.cs_form_login .cs_content_login .cs_text_password:focus {
+.cs_form_login .cs_content_login .cs_text_password:focus,
+.cs_form_signin .cs_content_signin .cs_text_usermail:focus,
+.cs_form_signin .cs_content_signin .cs_text_password:focus {
 	background: #dfe9ec;
 	color: #414848;
 	
