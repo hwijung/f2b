@@ -14,18 +14,19 @@
 			$query = "SELECT * FROM cron WHERE user='$user'";
 
 			$sth = $db->query ( $query );
-
-			if ( $sth == false ) {
-				echo json_encode ( array ( 'result_code' => 1, 'message' => 'No matching results' ) );
-				exit;				
-			} else {
-				echo json_encode ( array ( 'result_code' => 0, $row ) )
-				exit;
+			foreach ( $sth->fetchAll() as $row )	{
+				if ( $sth == false ) {
+					echo json_encode ( array ( 'result_code' => 1, 'message' => 'No matching results' ) );
+					exit;				
+				} else {
+					echo json_encode ( array ( 'result_code' => 0, $row ) );
+					exit;
+				}
 			}
 		// UPDATE SETTINGS IN DB
 		} else if ( $_SERVER['REQUEST_METHOD'] == 'PUT' ) 	{
-			$condition = $_POST['periodic_condition'];
-			$command = $_POST['command_line'] . $user;
+			$condition = $_PUT['periodic_condition'];
+			$command = $_PUT['command_line'] . " " . $user;
 
 			$query = "REPLACE INTO cron SET user='$user', periodic_condition='$condition', command_line='$command', on_off='$on_off'";
 
@@ -33,7 +34,7 @@
 
 			if ( $sth == false ) {
 				echo json_encode ( array ( 'result_code' => 1, 'message' => 'Couldn\'t update settings.' ) );
-				exit;
+				exit; 
 			} else {
 				echo json_encode ( array ( 'result_code' => 0, $row ) );
 				exit;
@@ -41,11 +42,13 @@
 		// UPDATE ON AND OFF SETTING IN DB, 
 		// AND UPDATE CRONTAB according to THE ON_OFF
 		} else if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) 	{
+			$condition = "";
+			$command = "";
 			$on_off = $_POST['on_off'];
 
-			$query = "REPLACE INTO cron SET user='$user', periodic_condition='$condition', command_line='$command', on_off='$on_off'";
+			$query_update = "REPLACE INTO cron SET user='$user', on_off='$on_off'";
 
-			$sth = $db->query ( $query );	
+			$sth = $db->query ( $query_update );	
 
 			if ( $sth == false ) {
 				echo json_encode ( array ( 'result_code' => 1, 'message' => 'Couldn\'t update settings.' ) );
@@ -53,22 +56,31 @@
 				echo json_encode ( array ( 'result_code' => 0, $row ) );
 			}	
 
-			if ( $on_off == 0 ) {
-				// DEACTIVATE CRONTAB
+			$query_select = "SELECT * FROM cron WHERE user='$user'";
 
-			} else {
-				// ACTIVATE CRONTAB
-				
-			}	
+			$settings = $db->query ( $query_select );
+			
+			if ( $settings != FALSE ) {
+				foreach ( $settings->fetchAll() as $row )	{
+					$condition = $row['periodic_condition'];
+					$command = $row['command_line'];
+				}
+
+				if ( $on_off == 0 ) {
+					// DEACTIVATE CRONTAB
+					$shell_command = "crontab -u apache -l | grep -v '" . $command . "' | crontab -u apache -";
+
+					$output = shell_exec ( $shell_command );
+				} else {
+					// ACTIVATE CRONTAB
+					if ( $condition != "" && $command != "" ) {
+						$shell_command = "(crontab -u apache -l ; echo \"" . $condition . " " . $command . "\") | crontab -u apache -";
+
+						$output = shell_exec ( $shell_command );
+					}
+				}	
+			}
 		}
 	}
-
-/*
-	$output = shell_exec ( 'ls' );
-
-	echo "<pre> $output </pre>";
-
-http://blog.fayland.org/2011/10/removeadd-job-to-crontab-by-commandline.html
-*/	
 ?>
  

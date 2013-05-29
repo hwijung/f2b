@@ -76,7 +76,7 @@
 			}
 
 			function sync_activate_buttons () {
-				$.get ( 'cron.php', null, function ( result ) {
+				$.get ( 'crontab.php', null, function ( result ) {
 					if ( result[0]['on_off'] == 0 ) {
 						$("#id_button_activate").removeAttr ( "disabled" );
 						$("#id_button_deactivate").attr ( "disabled", "true" );
@@ -223,20 +223,29 @@
 
 				// When activate button clicked
 				$("#id_button_activate").click ( function () {
-					$.post ( 'cron.php', {
-						periodic_condition: "1 0 * * *",
-						command_line: "ruby f2b.ruby ",
-						on_off: 1 }, 
+					// If there are some setting fields, update it to DB here with PUT 
+					$.ajax ( {
+						type: "PUT",
+						url: "crontab.php",
+						data: { periodic_condition: "1 0 * * *",
+								command_line: "ruby f2b.ruby" }
+						} ).done ( function ( result ) { } );
+
+					$.post ( 'crontab.php', { on_off: 1 }, 
 						function ( result ) { 
 							show_message ( 'Service Activated', result['message'] );
-						}
-					);
+							sync_activate_buttons ();
+						}, 'json' );
 					return false;
 				} );
 
 				// When deactivate button clicked
 				$("#id_button_deactivate").click ( function () {
-					
+					$.post ( 'crontab.php', { on_off: 0 }, 
+						function ( result ) { 
+							show_message ( 'Service Deactivated', result['message'] );
+							sync_activate_buttons ();
+						}, 'json' );
 					return false;
 				} );
 			});
