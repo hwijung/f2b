@@ -74,6 +74,21 @@
 					$("#id_form_wp_account input").attr( 'disabled', 'true' );
 				}, 'json' );
 			}
+
+			function sync_activate_buttons () {
+				$.get ( 'cron.php', null, function ( result ) {
+					if ( result[0]['on_off'] == 0 ) {
+						$("#id_button_activate").removeAttr ( "disabled" );
+						$("#id_button_deactivate").attr ( "disabled", "true" );
+					} else if ( result[0]['on_off'] == 1 ) {
+						$("#id_button_activate").attr ( "disabled", "true" );
+						$("#id_button_deactivate").removeAttr ( "disabled" );
+					} else {
+						$("#id_button_activate").removeAttr ( "disabled" );
+						$("#id_button_deactivate").attr ( "disabled", "true" );
+					}
+				}, 'json' );
+			}
 			
 			$(document).ready ( function () {
 
@@ -180,21 +195,6 @@
 					return false;
 				});
 
-				// When fb edit button clicked
-				/*
-				$("#btn_edit_fb_account").click ( function () {
-					$.get ( 'fb_loginurl_redirect.php', null, function ( result ) {
-							if ( result['fb_user'] == null )	{
-								var url = result['loginUrl'];
-								window.open ( url );
-							} else {
-								alert ( result['fb_user'] );
-							}
-
-					}, 'json' );
-					
-				});*/
-
 				// When fb Login button clicked
 				$("#id_button_login_fb_account").click ( function ()	{
 					var result = window.showModalDialog ( "./fbaccess.php");
@@ -220,6 +220,25 @@
 					}, 'json' );
 					return false;	
 				});
+
+				// When activate button clicked
+				$("#id_button_activate").click ( function () {
+					$.post ( 'cron.php', {
+						periodic_condition: "1 0 * * *",
+						command_line: "ruby f2b.ruby ",
+						on_off: 1 }, 
+						function ( result ) { 
+							show_message ( 'Service Activated', result['message'] );
+						}
+					);
+					return false;
+				} );
+
+				// When deactivate button clicked
+				$("#id_button_deactivate").click ( function () {
+					
+					return false;
+				} );
 			});
 		</script>
 	</head>
@@ -313,7 +332,8 @@
 
 			<div id="id_settings_publishing" class="cs_settings_publishing">
 				<h2> Publishing </h2>
-				<button id="id_button_activate" disabled>Activate</button>
+				<p>Turn on or turn off the publishing.</p>
+				<button id="id_button_activate" style="margin-left:20px;" disabled>Activate</button>
 				<button id="id_button_deactivate" disabled>Deactivate</button>
 			</div>
 

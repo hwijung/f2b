@@ -27,3 +27,12 @@ CREATE TABLE wp_account
 	wp_password varchar(255) NOT NULL,
 	PRIMARY KEY (user)
 );
+
+CREATE TABLE cron
+(
+	user varchar(255) NOT NULL,
+	periodic_condition varchar(32) NOT NULL,
+	command_line varchar(255) NOT NULL,
+	on_off BOOL NOT NULL,
+	PRIMARY KEY (user)
+);

@@ -13,44 +13,65 @@ require 'mysql2'
 
 # Blog information for test purpose
 @blog_hostname = "www.linus.pe.kr"
-@blog_api_path = "/home/wordpress/xmlrpc.php"
+@blog_apipath = "/home/wordpress/xmlrpc.php"
 @blog_url = "http://www.linus.pe.kr/home/wordpress/"
 @blog_id = "hwijung"
 @blog_password = "q1234567"
 @category = [ "Daily Life" ]
 @time_locale = 9
-@facebook_name = "hwijung.ryu"
+@fb_user = "hwijung.ryu"
  
-@yesterday = Date.today - 1;
+# TODO: should be changed to the user settings
+# time_temp = Time.now - 345600
+time_temp = Time.local( 2013, 4, 20 )
+@yesterday_begin = Time.local( time_temp.year, time_temp.month, time_temp.day, 0, 0, 0 )
+@yesterday_end = Time.local( time_temp.year, time_temp.month, time_temp.day, 23, 59, 59 )
 
-# initialize 
-# @graph = Koala::Facebook::API.new("AAACEdEose0cBAKVZCYHkZB42VwI5JJDLfZAXpz0J6fka0Hto10R4zNlbEETd2Lxo5UvKk94EGnMedxh06tgZCo8v0B5YjTC2awNOj46fVAZDZD");
-
-# MySQL Database Connection
+# Create MySQL Database Connection
 @db_con = Mysql2::Client.new( :host=>'localhost', :username=>'root', :password=>'!qazxsw2' )
+
+# Use F2B database 
 @db_con.query 'use f2b'
+
+# Query Wordpress user information
 results = @db_con.query( 'SELECT * FROM wp_account WHERE user = "' + @username + '"', :as=>'hash' )
 
+# Set up blog account
 results.each(:as => :hash) do |row| 
-	# TODO : set up account 
-	row['user']
+	@blog_id = row['wp_id']
+	@blog_password = row['wp_password']
+	@blog_url = row['wp_address']
+	@blog_hostname = row['wp_hostname']
+	@blog_apipath = row['wp_apipath']
 end
 
-
 # Create Blog Object
-@blog = RMetaWebLog.new(@blog_hostname, @blog_api_path, {
+@blog = RMetaWebLog.new(@blog_hostname, @blog_apipath, {
 	:blog_url => @blog_url,
 	:blog_id => "1111",
 	:api_user => @blog_id,
  	:api_pass => @blog_password } )
 
-# Text to HTML Link
-# @generic_URL_regexp = Regexp.new( '(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
-# @starts_with_www_regexp = Regexp.new( '(^|[\n ])((www)\.[^ \"\t\n\r<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
-# @starts_with_ftp_regexp = Regexp.new( '(^|[\n ])((ftp)\.[^ \"\t\n\r<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
-# @email_regexp = Regexp.new( '(^|[\n ])([a-z0-9&\-_\.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)', Regexp::IGNORECASE )
+# Query facebook user information
+results = @db_con.query( 'SELECT * FROM fb_account WHERE user = "' + @username + '"' )
 
-=begin
+# Set up facebook account
+results.each(:as => :hash) do |row|
+	@fb_access_token = row['fb_access_token']
+	@fb_user = row['fb_user']
+end
+
+# FB initialize 
+@graph = Koala::Facebook::API.new(@fb_access_token);
+
+
+# Text to HTML Link
+@generic_URL_regexp = Regexp.new( '(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
+@starts_with_www_regexp = Regexp.new( '(^|[\n ])((www)\.[^ \"\t\n\r<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
+@starts_with_ftp_regexp = Regexp.new( '(^|[\n ])((ftp)\.[^ \"\t\n\r<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
+@email_regexp = Regexp.new( '(^|[\n ])([a-z0-9&\-_\.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)', Regexp::IGNORECASE )
+
+
 def linkify( text )
   s = text.to_s
   s.gsub!( @generic_URL_regexp, '\1<a href="\2">\2</a>' )
@@ -61,28 +82,27 @@ def linkify( text )
 end 
 
 # Build Title
-post_title = "#{@yesterday.year}년" + " #{@yesterday.month}월" + " #{@yesterday.day}일의 사건사고"
+post_title = "#{@yesterday_begin.year}년" + " #{@yesterday_begin.month}월" + " #{@yesterday_begin.day}일의 사건사고"
 
 # Build Contents
 @post_contents = "<UL style=\"PADDING-BOTTOM: 0px; LIST-STYLE-TYPE: none; PADDING-LEFT: 10px; WIDTH: 90%; PADDING-RIGHT: 10px; LIST-STYLE-IMAGE: none; PADDING-TOP: 0px\">"
 @post_count = 0
 facebook_entry_template = "<LI style=\"BORDER-BOTTOM: #ddd 1px dashed; PADDING-BOTTOM: 5px; LIST-STYLE-TYPE: none; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; LIST-STYLE-IMAGE: none; PADDING-TOP: 7px\"> %s %s <A style=\"COLOR: #646464; FONT-SIZE: 8pt\" href=\"http://www.facebook.com/%s/posts/%s\" target=_blank>#</A></LI>"
 
-
 # get facebook user information
-@user_object = @graph.get_object(@facebook_name);
+@user_object = @graph.get_object(@fb_user)
 
 # get facebook user statuses
-@user_statuses = @graph.get_connections(@facebook_name,"statuses");
+@user_statuses = @graph.get_connections(@fb_user,"statuses")
 
-#
 @user_statuses.each do | status |
 	@time = DateTime.parse( status["updated_time"] )
+	@converted_time = Time.local( @time.year, @time.month, @time.day, @time.hour, @time.min, @time.sec )
 	
 #	puts @time.year.to_s + "/" + @time.month.to_s + "/" + @time.day.to_s
 #	puts @yesterday.year.to_s + "/" + @yesterday.month.to_s + "/" + @yesterday.day.to_s
-	
-	if @time.year == @yesterday.year && @time.month == @yesterday.month && @time.day == @yesterday.day
+
+	if (@yesterday_begin..@yesterday_end).include?(@converted_time)
 		@post_date_string = sprintf( "%d:%d", @time.hour.to_s, @time.min.to_s )
 		@post_contents = sprintf( facebook_entry_template, linkify( status["message"] ), @post_date_string, @facebook_name, status["id"] ) + @post_contents 
 		@post_count = @post_count + 1
@@ -93,12 +113,9 @@ end
 
 # post
 if @post_count != 0
-	@blog.new_post( post_title, @post_contents, @category )
+	# @blog.new_post( post_title, @post_contents, @category )
 	puts "[" + DateTime.now.to_s + "] " + "facebook posts are successfully posted"
 else
 	puts "[" + DateTime.now.to_s + "] " + "There's no post to post"
 end 
 
-puts post_title  
-puts @post_contents
-=end
