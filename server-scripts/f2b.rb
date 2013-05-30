@@ -42,8 +42,6 @@ else
 	@before = @yesterday_end
 end
 
-time_temp = Time.local( 2013, 4, 20 )
-
 # Create MySQL Database Connection
 @db_con = Mysql2::Client.new( :host=>'localhost', :username=>'root', :password=>'!qazxsw2' )
 
@@ -116,10 +114,6 @@ facebook_entry_template = "<LI style=\"BORDER-BOTTOM: #ddd 1px dashed; PADDING-B
 	@time = DateTime.parse( status["updated_time"] )
 	@converted_time = Time.local( @time.year, @time.month, @time.day, @time.hour, @time.min, @time.sec )
 	
-#	puts @time.year.to_s + "/" + @time.month.to_s + "/" + @time.day.to_s
-#	puts @yesterday.year.to_s + "/" + @yesterday.month.to_s + "/" + @yesterday.day.to_s
-
-
 	if (@since..@before).include?(@converted_time)
 		@post_date_string = sprintf( "%d:%d", @time.hour.to_s, @time.min.to_s )
 		@post_contents = sprintf( facebook_entry_template, linkify( status["message"] ), @post_date_string, @facebook_name, status["id"] ) + @post_contents 
@@ -128,8 +122,6 @@ facebook_entry_template = "<LI style=\"BORDER-BOTTOM: #ddd 1px dashed; PADDING-B
 end
 
 @post_contents = @post_contents +  "</UL><DIV style=\"TEXT-ALIGN: right; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; WIDTH: 95%; PADDING-RIGHT: 0px; PADDING-TOP: 5px\"><A style=\"FLOAT: right; COLOR: #595454; FONT-SIZE: 8pt; TEXT-DECORATION: none\" href=\"http://www.facebook.com/hwijung.ryu\" target=_blank>from facebook</A></DIV>"
-
-puts @post_contents
 
 # post
 if @post_count != 0

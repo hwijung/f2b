@@ -16,10 +16,12 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 		<meta http-equiv="Content-Language" content="en-us"> 
 
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 		<link href="./css/main.css" rel="stylesheet" type="text/css">
 		<link href="./css/style.css" rel="stylesheet" type="text/css">
  
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
 
    		<script type="text/javascript">
    			function show_message ( title, msg ) {
@@ -133,6 +135,23 @@
 					}, 'json' );
 				}
 			}
+
+			$( function () {
+				$( "#id_from" ).datepicker ( {
+					defaultDate: "+1w",
+					changeMonth: true,
+					numberofMonths: 1,
+					onClose: function ( selectedDate ) {
+					}
+				});
+				$( "#id_to" ).datepicker ( {
+					defaultDate: "+1w",
+					changeMonth: true,
+					numberofMonths: 1,
+					onClose: function ( selectedDate ) {
+					}
+				});
+			});
 			
 			$(document).ready ( function () {
 
@@ -269,7 +288,7 @@
 
 				// When force button clicked
 				$("#id_button_force").click ( function () {
-					$.post ( 'publish.php', null, function ( result ) {
+					$.post ( 'publish.php', { from : $("#id_from").val (), to: $("#id_to").val() }, function ( result ) {
 						show_message ( 'Publishing complete', 'Facebook messages are published to your Wordpress blog.' );
 					}, 'json' );
 					return false;
@@ -373,11 +392,17 @@
 
 			<div id="id_settings_publishing" class="cs_settings_publishing">
 				<h2> Publishing </h2>
+				<h3> Periodic publishing</h3>
 				<p>Turn on or turn off the periodical publishing. Click Force Publishing button if you want to publish right now.</p>
 				<button id="id_button_activate" style="margin-left:20px;" disabled>Activate</button>
 				<button id="id_button_deactivate" disabled>Deactivate</button>
+				<h3> Force publishing</h3>
+				<label>From</label>
+				<input type="text" id="id_from" name="from" class="cs_text_settings"/><br/>
+				<label>To</label>
+				<input type="text" id="id_to" name="to" class="cs_text_settings"/>
 				<button id="id_button_force" style="margin-left:20px;" disabled>Force Publishing</button>
-			</div>
+			</div> 
 
 			<!--
 			<div id="id_settings_templates" class="cs_settings_templates">

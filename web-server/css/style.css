@@ -65,7 +65,7 @@ body {
 NOTIFICATION BAR
 *******************/
 #id_notification_bar {
-	position: absolute;
+	position: fixed;
 	top: 10px;
 	left:20%;
 	width:60%;
@@ -420,7 +420,7 @@ SETINGS DIV
 	line-height: 12px;
 	color: #414848;
 	margin-left: 10px;
-	margin-top: 5px;
+	margin-top: 10px;
 }
 
 .cs_settings label {
