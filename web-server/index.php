@@ -1,4 +1,15 @@
 <!DOCTYPE HTML>
+<?php
+	session_start ();
+
+	if ( !empty($_SESSION['user']) ) {
+		$isLogin = 1;
+	} else {
+		$isLogin = 0;
+	}
+
+?>
+
 <html lang="en">
 	<head>
 		<title>Facebook to Wordpress, Daily backup</title>
@@ -39,6 +50,35 @@
    				}
    			}
 
+   			function login () {
+   				$.post ( 'login.php', { usermail: $("#id_text_login_usermail").val (), password: $("#id_text_login_password").val () } , function ( result ) {
+					if ( result['result_code'] == 0 )	{
+						switch_to_login_state ();
+
+						show_message ( "Login success", "You are successfully logged in to the service." );
+					} else {
+						show_message ( "Login failed", result['message'] );
+					}
+				}, 'json' );
+
+				// update for login failure
+				return false;
+   			}
+
+   			function switch_to_login_state () {
+   				// login success
+				$("#id_text_login_usermail").addClass ( "loggedin" ).attr ( "disabled", "true" );
+				$("#id_text_login_password").addClass ( "loggedin" ).attr ( "disabled", "true" );
+
+				// update forms
+				fill_fb_account_form ();
+				fill_wp_account_form ();
+
+				switch_login_logout_button ( true );
+				switch_settings_availability ( true );
+				sync_activate_buttons ( true );			
+   			}
+
 			function clean_up_login_form ()	{
 				$("#id_text_login_usermail").focus ().val ("");
 				$("#id_text_login_password").val ("");
@@ -61,7 +101,9 @@
 			function clean_up_wp_account_form () {
 				$("#id_text_wp_id").val ( "" );
 				$("#id_text_wp_address").val ( "" );
-				$("#id_text_wp_password").val ( "" );				
+				$("#id_text_wp_password").val ( "" );		
+				$("#id_text_wp_hostname").val ( "" );
+				$("#id_text_wp_apipath").val ( "" );		
 			}  
  
 			function fill_wp_account_form () {
@@ -75,19 +117,21 @@
 				}, 'json' );
 			}
 
-			function sync_activate_buttons () {
-				$.get ( 'crontab.php', null, function ( result ) {
-					if ( result[0]['on_off'] == 0 ) {
-						$("#id_button_activate").removeAttr ( "disabled" );
-						$("#id_button_deactivate").attr ( "disabled", "true" );
-					} else if ( result[0]['on_off'] == 1 ) {
-						$("#id_button_activate").attr ( "disabled", "true" );
-						$("#id_button_deactivate").removeAttr ( "disabled" );
-					} else {
-						$("#id_button_activate").removeAttr ( "disabled" );
-						$("#id_button_deactivate").attr ( "disabled", "true" );
-					}
-				}, 'json' );
+			function sync_activate_buttons ( force ) {
+				if ( force == false ) {
+					$("#id_button_activate").attr ( "disabled", "true" );
+					$("#id_button_deactivate").attr ( "disabled", "true" );
+				} else {
+					$.get ( 'crontab.php', null, function ( result ) {
+						if ( result[0]['on_off'] == 0 ) {
+							$("#id_button_activate").removeAttr ( "disabled" );
+							$("#id_button_deactivate").attr ( "disabled", "true" );
+						} else if ( result[0]['on_off'] == 1 ) {
+							$("#id_button_activate").attr ( "disabled", "true" );
+							$("#id_button_deactivate").removeAttr ( "disabled" );
+						} 
+					}, 'json' );
+				}
 			}
 			
 			$(document).ready ( function () {
@@ -141,30 +185,8 @@
 				});
 
 				// When login button clicked 
-				$("#id_button_login").click ( function ()	{
-	
-					$.post ( 'login.php', { usermail: $("#id_text_login_usermail").val (), password: $("#id_text_login_password").val () } , function ( result ) {
-							if ( result['result_code'] == 0 )	{
-								// login success
-								$("#id_text_login_usermail").addClass ( "loggedin" ).attr ( "disabled", "true" );
-								$("#id_text_login_password").addClass ( "loggedin" ).attr ( "disabled", "true" );
-
-								// update forms
-								fill_fb_account_form ();
-								fill_wp_account_form ();
-
-								switch_login_logout_button ( true );
-								switch_settings_availability ( true );
-
-								show_message ( "Login success", "You are successfully logged in to the service." );
-							} else {
-								show_message ( "Login failed", result['message'] );
-							}
-						}, 'json' );
-
-					// update for login failure
-					return false;
-				});
+				$("#id_text_login_password").keydown ( function ( event ) { if ( event.which == 13 ) { login (); }});
+				$("#id_button_login").click ( function ()	{ login (); });
 
 				// When logout button clicked
 				$("#id_button_logout").click ( function () {
@@ -178,6 +200,8 @@
 
 					switch_login_logout_button ( false );
 					switch_settings_availability ( false );
+
+					sync_activate_buttons ( false );
 
 					show_message ( "Logout success", "You are successfully logged out." );		
 				});
@@ -223,17 +247,10 @@
 
 				// When activate button clicked
 				$("#id_button_activate").click ( function () {
-					// If there are some setting fields, update it to DB here with PUT 
-					$.ajax ( {
-						type: "PUT",
-						url: "crontab.php",
-						data: { periodic_condition: "1 0 * * *",
-								command_line: "ruby f2b.ruby" }
-						} ).done ( function ( result ) { } );
-
-					$.post ( 'crontab.php', { on_off: 1 }, 
+					$.post ( 'crontab.php', { periodic_condition: "1 0 * * *",
+								command_line: "ruby /home/root/f2b/f2b.ruby", on_off: 1 }, 
 						function ( result ) { 
-							show_message ( 'Service Activated', result['message'] );
+							show_message ( 'Update result', result['message'] );
 							sync_activate_buttons ();
 						}, 'json' );
 					return false;
@@ -241,13 +258,28 @@
 
 				// When deactivate button clicked
 				$("#id_button_deactivate").click ( function () {
-					$.post ( 'crontab.php', { on_off: 0 }, 
+					$.post ( 'crontab.php', { periodic_condition: "1 0 * * *",
+								command_line: "ruby /home/root/f2b/f2b.ruby", on_off: 0 }, 
 						function ( result ) { 
-							show_message ( 'Service Deactivated', result['message'] );
+							show_message ( 'Update result', result['message'] );
 							sync_activate_buttons ();
 						}, 'json' );
 					return false;
 				} );
+
+				// When force button clicked
+				$("#id_button_force").click ( function () {
+					$.post ( 'publish.php', null, function ( result ) {
+						show_message ( 'Publishing complete', 'Facebook messages are published to your Wordpress blog.' );
+					}, 'json' );
+					return false;
+				} );
+
+				// Check login state 
+				if ( <?php echo $isLogin ?> == 1 ) {
+					$("#id_text_login_usermail").val ( "<?php echo $_SESSION['user']?>" );
+					switch_to_login_state ();
+				}
 			});
 		</script>
 	</head>
@@ -341,16 +373,19 @@
 
 			<div id="id_settings_publishing" class="cs_settings_publishing">
 				<h2> Publishing </h2>
-				<p>Turn on or turn off the publishing.</p>
+				<p>Turn on or turn off the periodical publishing. Click Force Publishing button if you want to publish right now.</p>
 				<button id="id_button_activate" style="margin-left:20px;" disabled>Activate</button>
 				<button id="id_button_deactivate" disabled>Deactivate</button>
+				<button id="id_button_force" style="margin-left:20px;" disabled>Force Publishing</button>
 			</div>
 
+			<!--
 			<div id="id_settings_templates" class="cs_settings_templates">
 				<h2> Templates </h2>
 				<textarea width="300px" height="100px" disabled> { Hello [# INSERT HERE #] }</textarea>
 				<button id="id_button_save_template" disabled>Save</button>
 			</div>
+			-->
 		</div>
 
 		<footer>

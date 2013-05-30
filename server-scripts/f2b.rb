@@ -5,11 +5,14 @@ require 'rmetaweblog'
 require 'mysql2'
 
 # Command-line arguments
-@username = ARGV[0];
+# [0]: User ID, [1]: Since, [2]: Before
+@username = ARGV[0]
+@argv_since = ARGV[1]
+@argv_before = ARGV[2]
  
 # Application ID and SECRET to access facebook account
-@api_key = "159335287416086";
-@api_secret = "02c7d1369768a0a602cac78caebce7d3";
+@api_key = "159335287416086"
+@api_secret = "02c7d1369768a0a602cac78caebce7d3"
 
 # Blog information for test purpose
 @blog_hostname = "www.linus.pe.kr"
@@ -21,11 +24,25 @@ require 'mysql2'
 @time_locale = 9
 @fb_user = "hwijung.ryu"
  
-# TODO: should be changed to the user settings
-# time_temp = Time.now - 345600
+# Yesterday
+@yesterday = Time.now - 345600
+@yesterday_begin = Time.local( @yesterday.year, @yesterday.month, @yesterday.day, 0, 0, 0 )
+@yesterday_end = Time.local( @yesterday.year, @yesterday.month, @yesterday.day, 23, 59, 59 )
+
+# Time range by argument
+unless @argv_since.nil?
+	@since = Time.local( @argv_since[0,4], @argv_since[4,2], @argv_since[6,2], @argv_since[8,2], @argv_since[10,2], @argv_since[12,2] )
+else
+	@since = @yesterday_begin
+end	
+
+unless @argv_before.nil?
+	@before = Time.local( @argv_before[0,4], @argv_before[4,2], @argv_before[6,2], @argv_before[8,2], @argv_before[10,2], @argv_before[12,2] )
+else
+	@before = @yesterday_end
+end
+
 time_temp = Time.local( 2013, 4, 20 )
-@yesterday_begin = Time.local( time_temp.year, time_temp.month, time_temp.day, 0, 0, 0 )
-@yesterday_end = Time.local( time_temp.year, time_temp.month, time_temp.day, 23, 59, 59 )
 
 # Create MySQL Database Connection
 @db_con = Mysql2::Client.new( :host=>'localhost', :username=>'root', :password=>'!qazxsw2' )
@@ -102,7 +119,8 @@ facebook_entry_template = "<LI style=\"BORDER-BOTTOM: #ddd 1px dashed; PADDING-B
 #	puts @time.year.to_s + "/" + @time.month.to_s + "/" + @time.day.to_s
 #	puts @yesterday.year.to_s + "/" + @yesterday.month.to_s + "/" + @yesterday.day.to_s
 
-	if (@yesterday_begin..@yesterday_end).include?(@converted_time)
+
+	if (@since..@before).include?(@converted_time)
 		@post_date_string = sprintf( "%d:%d", @time.hour.to_s, @time.min.to_s )
 		@post_contents = sprintf( facebook_entry_template, linkify( status["message"] ), @post_date_string, @facebook_name, status["id"] ) + @post_contents 
 		@post_count = @post_count + 1
@@ -111,9 +129,11 @@ end
 
 @post_contents = @post_contents +  "</UL><DIV style=\"TEXT-ALIGN: right; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; WIDTH: 95%; PADDING-RIGHT: 0px; PADDING-TOP: 5px\"><A style=\"FLOAT: right; COLOR: #595454; FONT-SIZE: 8pt; TEXT-DECORATION: none\" href=\"http://www.facebook.com/hwijung.ryu\" target=_blank>from facebook</A></DIV>"
 
+puts @post_contents
+
 # post
 if @post_count != 0
-	# @blog.new_post( post_title, @post_contents, @category )
+	@blog.new_post( post_title, @post_contents, @category )
 	puts "[" + DateTime.now.to_s + "] " + "facebook posts are successfully posted"
 else
 	puts "[" + DateTime.now.to_s + "] " + "There's no post to post"
