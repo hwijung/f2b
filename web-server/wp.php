@@ -32,15 +32,25 @@
 			
 		// if read 
 		} else if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
-			$query = "SELECT * FROM wp_account WHERE user='$user'";
 
-			$sth = $db->query ( $query );
+			$method = $_GET['method'];
 
-			foreach ( $sth->fetchAll() as $row )	{
-				echo json_encode ( array ( 'result_code' => 0, $row ) );
+			if ( $method == 'account' ) {
+				$query = "SELECT * FROM wp_account WHERE user='$user'";
+
+				$sth = $db->query ( $query );
+
+				foreach ( $sth->fetchAll() as $row )	{
+					echo json_encode ( array ( 'result_code' => 0, $row ) );
+					exit;
+				}	
+				echo json_encode ( array ( 'result_code' => 1, 'message' => 'No matching account.' ) );
 				exit;
-			}	
-			echo json_encode ( array ( 'result_code' => 1, 'message' => 'No matching account.' ) );
+			} else if ( $method == 'categories' ) {
+				$output = shell_exec ( "ruby /home/root/f2b/getCategories.rb " . $user );
+				echo json_encode ( array ( 'result_code' => 0, 'categories' => $output ) );
+				exit;
+			}
 		}
 	} else {
 		exit;
