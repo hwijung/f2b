@@ -32,6 +32,7 @@
    					$("#id_notification_bar").fadeTo ( 2000, 0.9, function () {
    						$("#id_notification_bar").fadeOut ( 1000 ) ;  }  )  } );
    			}
+
    			function switch_settings_availability ( flag ) {
    				if ( flag ) {
 					$(".cs_settings button").removeAttr ( "disabled" );
@@ -109,7 +110,7 @@
 			}  
  
 			function fill_wp_account_form () {
-				$.get ( 'wp.php', null, function ( result ) {
+				$.get ( 'wp.php', { method: 'account' }, function ( result ) {
 					$("#id_text_wp_address").val ( result[0]['wp_address'] );
 					$("#id_text_wp_hostname").val ( result[0]['wp_hostname'] );
 					$("#id_text_wp_apipath").val ( result[0]['wp_apipath'] );
@@ -134,6 +135,16 @@
 						} 
 					}, 'json' );
 				}
+			}
+
+			function get_wp_categories () {
+				$.get ( 'wp.php', { method: 'categories' }, function ( result ) {
+					var categories = jQuery.parseJSON ( result['categories'] );
+					
+					for (var i = 0; i < categories.length; i++ ) {
+						$("#id_category").append('<option value=' + i + '>' + categories[i]['categoryName'] + '</option>');
+					} 
+				}, 'json' );
 			}
 
 			$( function () {
@@ -204,8 +215,8 @@
 				});
 
 				// When login button clicked 
-				$("#id_text_login_password").keydown ( function ( event ) { if ( event.which == 13 ) { login (); }});
-				$("#id_button_login").click ( function ()	{ login (); });
+				$("#id_text_login_password").keydown ( function ( event ) { if ( event.which == 13 ) { login (); get_wp_categories (); }});
+				$("#id_button_login").click ( function ()	{ login (); get_wp_categories ();});
 
 				// When logout button clicked
 				$("#id_button_logout").click ( function () {
@@ -306,7 +317,7 @@
 	<body>
 		<header class="cs_header_logo">
 			<div id="id_header_logo"></div>
-			<h1>Facebook to Wordpress</h1>
+			<a href="http://211.51.13.118/f2b/" style="text-decoration:none;"><h1>Facebook to Wordpress</h1></a>
 			<p>This service write daily summerize of your Facebook account.</p>
 		</header>
 
@@ -393,37 +404,51 @@
 			<div id="id_settings_publishing" class="cs_settings_publishing">
 				<h2> Publishing </h2>
 				<h3> Periodic publishing</h3>
-				<p>Turn on or turn off the periodical publishing. Click Force Publishing button if you want to publish right now.</p>
+				<p>Turn on or turn off the periodical publishing. This service automatically posts your facebook entries onto your blog at the start of everyday.</p>
 				<button id="id_button_activate" style="margin-left:20px;" disabled>Activate</button>
 				<button id="id_button_deactivate" disabled>Deactivate</button>
 				<h3> Force publishing</h3>
+				<p>First, set time range where your facebook words are included. And then click Force Publishing button to publish them right now.</p>
 				<label>From</label>
 				<input type="text" id="id_from" name="from" class="cs_text_settings"/><br/>
 				<label>To</label>
 				<input type="text" id="id_to" name="to" class="cs_text_settings"/>
 				<button id="id_button_force" style="margin-left:20px;" disabled>Force Publishing</button>
+				<h3>Category</h3>
+				<p>The blog category where this service create new posts.</p>
+				<label>Category</label>
+				<select id="id_category" name="category">
+				</select>
+				<button id="id_button_category" disabled>Save</button>
 			</div> 
-
+		
 			<!--
 			<div id="id_settings_templates" class="cs_settings_templates">
 				<h2> Templates </h2>
-				<textarea width="300px" height="100px" disabled> { Hello [# INSERT HERE #] }</textarea>
-				<button id="id_button_save_template" disabled>Save</button>
+				<p>HTML form template</p>
+				<label>Title</label>
+				<textarea width="100%" height="100px" id="id_textarea_title" disabled> { Hello [# INSERT HERE #] }</textarea><br/>
+				<label>Header</label>
+				<textarea width="300px" height="100px" id="id_textarea_header" disabled> </textarea><br/>
+				<label>Entry</label>
+				<textarea width="300px" height="100px" id="id_textarea_entry" disabled> </textarea><br/>		
+				<label>Footer</label>
+				<textarea width="300px" height="100px" id="id_textarea_footer" disabled> </textarea><br/>
+				<button id="id_button_save_template" style="margin-left:60px;margin-top:10px;" disabled>Save</button>
 			</div>
-			-->
+		-->
 		</div>
 
 		<footer>
 			<div id="id_footer_line"></div>
 			<nav>
       			<p>
-      				<a href="/credits.html">Credits</a> —
            			<a href="/tos.html">Terms of Service</a> —
            			<a href="http://www.linus.pe.kr/home/wordpress">Blog</a>
            		</p>
     		</nav>
 
-    		<p>Copyright © 2013 Hwijung Ryu</p>
+    		<p>Copyright © 2013 <a href="mailto:hwijung.ryu@gmail.com">Hwijung Ryu</a></p>
 		</footer>
 	</body>
 </html>

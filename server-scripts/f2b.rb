@@ -79,7 +79,6 @@ end
 # FB initialize 
 @graph = Koala::Facebook::API.new(@fb_access_token);
 
-
 # Text to HTML Link
 @generic_URL_regexp = Regexp.new( '(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
 @starts_with_www_regexp = Regexp.new( '(^|[\n ])((www)\.[^ \"\t\n\r<]*)', Regexp::MULTILINE | Regexp::IGNORECASE )
@@ -112,10 +111,15 @@ facebook_entry_template = "<LI style=\"BORDER-BOTTOM: #ddd 1px dashed; PADDING-B
 
 @user_statuses.each do | status |
 	@time = DateTime.parse( status["updated_time"] )
+	@time = @time.new_offset(9.0/24)
+	
 	@converted_time = Time.local( @time.year, @time.month, @time.day, @time.hour, @time.min, @time.sec )
+
+	puts @time
+	puts @converted_time
 	
 	if (@since..@before).include?(@converted_time)
-		@post_date_string = sprintf( "%d:%d", @time.hour.to_s, @time.min.to_s )
+		@post_date_string = @converted_time.strftime( "at %l:%m%p" )
 		@post_contents = sprintf( facebook_entry_template, linkify( status["message"] ), @post_date_string, @facebook_name, status["id"] ) + @post_contents 
 		@post_count = @post_count + 1
 	end
@@ -126,8 +130,8 @@ end
 # post
 if @post_count != 0
 	@blog.new_post( post_title, @post_contents, @category )
-	puts "[" + DateTime.now.to_s + "] " + "facebook posts are successfully posted"
+	puts "[" + DateTime.now.to_s + "] " +  "Total " + @post_count.to_s + " number of facebook posts are successfully posted."
 else
-	puts "[" + DateTime.now.to_s + "] " + "There's no post to post"
+	puts "[" + DateTime.now.to_s + "] " + "There's no post to post."
 end 
 

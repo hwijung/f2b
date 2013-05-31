@@ -220,12 +220,12 @@ LOGIN and SINGIN FORM CONTENT
 }
 
 .cs_user_icon {
-	top:130px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
+	top:154px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
 	background: rgba(65,72,72,0.75) url(../images/user-icon.png) no-repeat center;	
 }
 
 .cs_pass_icon {
-	top:182px;
+	top:197px;
 	background: rgba(65,72,72,0.75) url(../images/pass-icon.png) no-repeat center;
 }
 

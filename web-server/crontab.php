@@ -30,7 +30,7 @@
 			// condition and command are mandatory arguments
 			// on_off is optional argument for activating crontab
 			$condition = $_POST['periodic_condition'];
-			$command = $_POST['command_line'] . " " . $user;
+			$command = $_POST['command_line'] . " " . $user . " >> /home/root/f2b/cron.log";
 			$on_off = $_POST['on_off'];
 			$isActivated = FALSE;
 
