@@ -25,6 +25,7 @@ CREATE TABLE wp_account
 	wp_apipath varchar(255) NOT NULL,
 	wp_id varchar(255) NOT NULL,
 	wp_password varchar(255) NOT NULL,
+	wp_category varchar(255),
 	PRIMARY KEY (user)
 );
 

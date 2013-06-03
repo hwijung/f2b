@@ -141,9 +141,12 @@
 				$.get ( 'wp.php', { method: 'categories' }, function ( result ) {
 					var categories = jQuery.parseJSON ( result['categories'] );
 					
-					for (var i = 0; i < categories.length; i++ ) {
-						$("#id_category").append('<option value=' + i + '>' + categories[i]['categoryName'] + '</option>');
-					} 
+					if ( categories != null )	{		
+						$("#id_category").html ( "" );		
+						for (var i = 0; i < categories.length; i++ ) {
+							$("#id_category").append('<option value=' + i + '>' + categories[i]['categoryName'] + '</option>');
+						} 
+					}
 				}, 'json' );
 			}
 
@@ -278,7 +281,7 @@
 				// When activate button clicked
 				$("#id_button_activate").click ( function () {
 					$.post ( 'crontab.php', { periodic_condition: "1 0 * * *",
-								command_line: "ruby /home/root/f2b/f2b.ruby", on_off: 1 }, 
+								command_line: "ruby /home/root/f2b/f2b.rb", on_off: 1 }, 
 						function ( result ) { 
 							show_message ( 'Update result', result['message'] );
 							sync_activate_buttons ();
@@ -289,7 +292,7 @@
 				// When deactivate button clicked
 				$("#id_button_deactivate").click ( function () {
 					$.post ( 'crontab.php', { periodic_condition: "1 0 * * *",
-								command_line: "ruby /home/root/f2b/f2b.ruby", on_off: 0 }, 
+								command_line: "ruby /home/root/f2b/f2b.rb", on_off: 0 }, 
 						function ( result ) { 
 							show_message ( 'Update result', result['message'] );
 							sync_activate_buttons ();
@@ -304,6 +307,26 @@
 					}, 'json' );
 					return false;
 				} );
+
+				// When category save button clicked
+				$("#id_button_save_category").click ( function () {
+					var txt_category = $("#id_category option:selected").text ();
+					$.post ( 'wp.php', { wp_category: txt_category }, 
+					function ( result ) {
+						if ( result['result_code'] == 0 ) {
+							show_message ( 'Category saved', 'Category selected and saved.' );
+						} else {
+							show_message ( 'Category save failed.', result['message'] );
+						}
+					}, 'json' );
+					return false;
+				});
+
+				// When category update button clicked
+				$("#id_button_update_category").click ( function () {
+					get_wp_categories ();
+					show_message ( 'Category update', 'trying to update categories of blog.');
+				});
 
 				// Check login state 
 				if ( <?php echo $isLogin ?> == 1 ) {
@@ -419,7 +442,8 @@
 				<label>Category</label>
 				<select id="id_category" name="category">
 				</select>
-				<button id="id_button_category" disabled>Save</button>
+				<button id="id_button_save_category" disabled>Save</button>
+				<button id="id_button_update_category" disabled>Update</button>
 			</div> 
 		
 			<!--

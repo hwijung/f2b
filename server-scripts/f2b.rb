@@ -58,6 +58,7 @@ results.each(:as => :hash) do |row|
 	@blog_url = row['wp_address']
 	@blog_hostname = row['wp_hostname']
 	@blog_apipath = row['wp_apipath']
+	@blog_category = row['wp_category']
 end
 
 # Create Blog Object
@@ -114,9 +115,6 @@ facebook_entry_template = "<LI style=\"BORDER-BOTTOM: #ddd 1px dashed; PADDING-B
 	@time = @time.new_offset(9.0/24)
 	
 	@converted_time = Time.local( @time.year, @time.month, @time.day, @time.hour, @time.min, @time.sec )
-
-	puts @time
-	puts @converted_time
 	
 	if (@since..@before).include?(@converted_time)
 		@post_date_string = @converted_time.strftime( "at %l:%m%p" )
@@ -126,6 +124,11 @@ facebook_entry_template = "<LI style=\"BORDER-BOTTOM: #ddd 1px dashed; PADDING-B
 end
 
 @post_contents = @post_contents +  "</UL><DIV style=\"TEXT-ALIGN: right; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; WIDTH: 95%; PADDING-RIGHT: 0px; PADDING-TOP: 5px\"><A style=\"FLOAT: right; COLOR: #595454; FONT-SIZE: 8pt; TEXT-DECORATION: none\" href=\"http://www.facebook.com/hwijung.ryu\" target=_blank>from facebook</A></DIV>"
+
+# set category
+unless @blog_category.nil?
+	@category = @blog_category
+end 
 
 # post
 if @post_count != 0
