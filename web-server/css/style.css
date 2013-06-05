@@ -403,17 +403,16 @@ SETINGS DIV
 	margin-bottom: 10px;
 }
 
-.cs_settings h2 {
+.cs_settings h3 {
 	font_family: 'Bree Serif', serif;
 	font-weight: 250;
 	font-size: 15px;
 	line-height: 15px;
 	color: #414848;
-	margin-left: 10px;
 	margin-top: 20px;
 }
 
-.cs_settings h3 {
+.cs_settings h4 {
 	font_family: 'Bree Serif', serif;
 	font-weight: 250;
 	font-size: 12px;
@@ -481,6 +480,22 @@ SETINGS DIV
 .cs_settings button[disabled] {
 	background: #DDD;
 	border: 1px solid #CCC;
+}
+
+.cs_settings select {
+	font-size: 12px;
+}
+
+.cs_settings textarea {
+	border:solid;
+	border-width:1px;
+	width:450px;
+	font-size: 10px;
+}
+
+.cs_settings #id_settings_templates label {
+	width: 60px;
+	vertical-align: top;
 }
 
 .cs_settings p {

@@ -20,10 +20,14 @@
 		<link href="./css/main.css" rel="stylesheet" type="text/css">
 		<link href="./css/style.css" rel="stylesheet" type="text/css">
  
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
 
    		<script type="text/javascript">
+   			$( function () {
+   				$("#id_accordian").accordion ();
+   			} );
+
    			function show_message ( title, msg ) {
    				$("#id_notification_bar_title").html ( title );
    				$("#id_notification_bar_message").html ( msg );
@@ -79,7 +83,9 @@
 
 				switch_login_logout_button ( true );
 				switch_settings_availability ( true );
-				sync_activate_buttons ( true );			
+				sync_activate_buttons ( true );		
+
+				get_wp_categories ();
    			}
 
 			function clean_up_login_form ()	{
@@ -111,11 +117,14 @@
  
 			function fill_wp_account_form () {
 				$.get ( 'wp.php', { method: 'account' }, function ( result ) {
+					var sentence = " is selected as a category for publishing.";
+
 					$("#id_text_wp_address").val ( result[0]['wp_address'] );
 					$("#id_text_wp_hostname").val ( result[0]['wp_hostname'] );
 					$("#id_text_wp_apipath").val ( result[0]['wp_apipath'] );
 					$("#id_text_wp_id").val ( result[0]['wp_id'] );
 					$("#id_text_wp_password").val ( result[0]['wp_password'] );
+					$("#id_p_category").html ( result[0]['wp_category'] + sentence );
 					$("#id_form_wp_account input").attr( 'disabled', 'true' );
 				}, 'json' );
 			}
@@ -135,6 +144,13 @@
 						} 
 					}, 'json' );
 				}
+			}
+
+			function sync_category () {
+				$.get ( 'wp.php', { method: 'account' }, function ( result ) {
+					var sentence = " is selected as a category for publishing.";
+					$("#id_p_category").html ( result[0]['wp_category'] + sentence );
+				}, 'json' );
 			}
 
 			function get_wp_categories () {
@@ -314,6 +330,7 @@
 					$.post ( 'wp.php', { wp_category: txt_category }, 
 					function ( result ) {
 						if ( result['result_code'] == 0 ) {
+							sync_category ();
 							show_message ( 'Category saved', 'Category selected and saved.' );
 						} else {
 							show_message ( 'Category save failed.', result['message'] );
@@ -392,75 +409,79 @@
 		</div>
 
 		<!-- Edit settings -->
+
 		<div id="id_settings" class="cs_settings">
 			<h1>Your settings</h1>
-
-			<div id="id_settings_accounts" class="cs_settings_accounts">
-				<h2> Accounts </h2>
-				
-				<h3>Facebook account</h3>
-				<p>Click the login button below and type your facebook username and password. Access key for your facebook contents will be issued ans we save it associated with your F2B service accounts. </p>
-				<form id="id_form_accounts" accept-charset="utf-8">
-					<label>Facebook ID</label>
-					<input type="text" id="id_text_fb_name" name="nm_text_fb_name" class="cs_text_settings" required disabled>
-					<button id="id_button_login_fb_account" class="cs_button_login_fb_account" disabled>Login</button>
-				</form>
-					
-				<h3>Wordpress account</h3>
-				<p>Click Edit button and input your wordpress account information. F2B service logged in your authorization schemes everyday. </p>
-				<form id="id_form_wp_account" accept-charset="utf-8">
-					<button id="id_button_edit_wp_account" type="button" disabled>Edit</button>
-					<button id="id_button_save_wp_account" disabled>Save</button><br/>
-					<label>Blog Address</label>
-					<input type="text" id="id_text_wp_address" name="nm_wp_address" class="cs_text_settings" style="display:inline-block;width: 400px;" required disabled><br/>
-					<label>Host Name</label>
-					<input type="text" id="id_text_wp_hostname" name="nm_wp_hostname" class="cs_text_settings" style="display:inline-block;width: 400px;" required disabled><br/>
-					<label>API Path </label>
-					<input type="text" id="id_text_wp_apipath" name="nm_wp_apipath" class="cs_text_settings" style="display:inline-block;width: 400px;" required disabled><br/>					
-					<label>User ID</label>
-					<input type="text" id="id_text_wp_id" name="nm_wp_id" class="cs_text_settings" required disabled><br/>
-					<label>Password</label>
-					<input type="password" id="id_text_wp_password" name="nm_wp_password" class="cs_text_settings" required disabled><br/>
-				</form>
-			</div>
-
-			<div id="id_settings_publishing" class="cs_settings_publishing">
-				<h2> Publishing </h2>
-				<h3> Periodic publishing</h3>
-				<p>Turn on or turn off the periodical publishing. This service automatically posts your facebook entries onto your blog at the start of everyday.</p>
-				<button id="id_button_activate" style="margin-left:20px;" disabled>Activate</button>
-				<button id="id_button_deactivate" disabled>Deactivate</button>
-				<h3> Force publishing</h3>
-				<p>First, set time range where your facebook words are included. And then click Force Publishing button to publish them right now.</p>
-				<label>From</label>
-				<input type="text" id="id_from" name="from" class="cs_text_settings"/><br/>
-				<label>To</label>
-				<input type="text" id="id_to" name="to" class="cs_text_settings"/>
-				<button id="id_button_force" style="margin-left:20px;" disabled>Force Publishing</button>
-				<h3>Category</h3>
-				<p>The blog category where this service create new posts.</p>
-				<label>Category</label>
-				<select id="id_category" name="category">
-				</select>
-				<button id="id_button_save_category" disabled>Save</button>
-				<button id="id_button_update_category" disabled>Update</button>
-			</div> 
+			<div id="id_accordian">
+				<h3> Accounts </h3>
+				<div id="id_settings_accounts" class="cs_settings_accounts">
 		
-			<!--
-			<div id="id_settings_templates" class="cs_settings_templates">
-				<h2> Templates </h2>
-				<p>HTML form template</p>
-				<label>Title</label>
-				<textarea width="100%" height="100px" id="id_textarea_title" disabled> { Hello [# INSERT HERE #] }</textarea><br/>
-				<label>Header</label>
-				<textarea width="300px" height="100px" id="id_textarea_header" disabled> </textarea><br/>
-				<label>Entry</label>
-				<textarea width="300px" height="100px" id="id_textarea_entry" disabled> </textarea><br/>		
-				<label>Footer</label>
-				<textarea width="300px" height="100px" id="id_textarea_footer" disabled> </textarea><br/>
-				<button id="id_button_save_template" style="margin-left:60px;margin-top:10px;" disabled>Save</button>
+					
+					<h4>Facebook account</h4>
+					<p>Click the login button below and type your facebook username and password. Access key for your facebook contents will be issued ans we save it associated with your F2B service accounts. </p>
+					<form id="id_form_accounts" accept-charset="utf-8">
+						<label>Facebook ID</label>
+						<input type="text" id="id_text_fb_name" name="nm_text_fb_name" class="cs_text_settings" required disabled>
+						<button id="id_button_login_fb_account" class="cs_button_login_fb_account" disabled>Login</button>
+					</form>
+						
+					<h4>Wordpress account</h4>
+					<p>Click Edit button and input your wordpress account information. F2B service logged in your authorization schemes everyday. </p>
+					<form id="id_form_wp_account" accept-charset="utf-8">
+						<button id="id_button_edit_wp_account" type="button" disabled>Edit</button>
+						<button id="id_button_save_wp_account" disabled>Save</button><br/>
+						<label>Blog Address</label>
+						<input type="text" id="id_text_wp_address" name="nm_wp_address" class="cs_text_settings" style="display:inline-block;width: 300px;" required disabled><br/>
+						<label>Host Name</label>
+						<input type="text" id="id_text_wp_hostname" name="nm_wp_hostname" class="cs_text_settings" style="display:inline-block;width: 300px;" required disabled><br/>
+						<label>API Path </label>
+						<input type="text" id="id_text_wp_apipath" name="nm_wp_apipath" class="cs_text_settings" style="display:inline-block;width: 300px;" required disabled><br/>					
+						<label>User ID</label>
+						<input type="text" id="id_text_wp_id" name="nm_wp_id" class="cs_text_settings" required disabled><br/>
+						<label>Password</label>
+						<input type="password" id="id_text_wp_password" name="nm_wp_password" class="cs_text_settings" required disabled><br/>
+					</form>
+				</div>
+
+				<h3> Publishing </h3>
+				<div id="id_settings_publishing" class="cs_settings_publishing">
+					
+					<h4> Periodic publishing</h4>
+					<p>Turn on or turn off the periodical publishing. This service automatically posts your facebook entries onto your blog at the start of everyday.</p>
+					<button id="id_button_activate" style="margin-left:20px;" disabled>Activate</button>
+					<button id="id_button_deactivate" disabled>Deactivate</button>
+					<h4> Force publishing</h4>
+					<p>First, set time range where your facebook words are included. And then click Force Publishing button to publish them right now.</p>
+					<label>From</label>
+					<input type="text" id="id_from" name="from" class="cs_text_settings"/><br/>
+					<label>To</label>
+					<input type="text" id="id_to" name="to" class="cs_text_settings"/>
+					<button id="id_button_force" style="margin-left:20px;" disabled>Force Publishing</button>
+					<h4>Category</h4>
+					<p>The blog category where this service create new posts. </p>
+					<label>Category</label>
+					<select id="id_category" name="category"></select>
+					<button id="id_button_save_category" disabled>Save</button>
+					<button id="id_button_update_category" disabled>Update</button>
+					<p id="id_p_category"></p>
+				</div> 
+			
+				<h3> Templates </h3>
+				<div id="id_settings_templates" class="cs_settings_templates">
+					<p>HTML form template</p>
+					<label>Title</label>
+					<textarea id="id_textarea_title" disabled> { Hello [# INSERT HERE #] }</textarea><br/>
+					<label>Header</label>
+					<textarea id="id_textarea_header" disabled> </textarea><br/>
+					<label>Entry</label>
+					<textarea id="id_textarea_entry" disabled> </textarea><br/>		
+					<label>Footer</label>
+					<textarea id="id_textarea_footer" disabled> </textarea><br/>
+					<button id="id_button_save_template" style="margin-left:60px;margin-top:10px;" disabled>Save</button><br/><br/>
+					<label>Preview</label>
+					<textarea id="id_textarea_preview" disabled> </textarea>
+				</div>
 			</div>
-		-->
 		</div>
 
 		<footer>
