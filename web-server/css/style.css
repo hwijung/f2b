@@ -491,6 +491,11 @@ SETINGS DIV
 	border-width:1px;
 	width:450px;
 	font-size: 10px;
+	resize: none;
+}
+
+.ui-tooltip {
+    font: 10px "Helvetica Neue", Sans-Serif;
 }
 
 .cs_settings #id_settings_templates label {

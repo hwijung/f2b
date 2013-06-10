@@ -29,6 +29,14 @@ CREATE TABLE wp_account
 	PRIMARY KEY (user)
 );
 
+CREATE TABLE wp_template
+(
+	user varchar(255) NOT NULL,
+	wp_title varchar(255),
+	wp_entry text,
+	PRIMARY KEY (user)
+);
+
 CREATE TABLE cron
 (
 	user varchar(255) NOT NULL,

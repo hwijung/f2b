@@ -19,13 +19,14 @@
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 		<link href="./css/main.css" rel="stylesheet" type="text/css">
 		<link href="./css/style.css" rel="stylesheet" type="text/css">
- 
+
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
 
    		<script type="text/javascript">
    			$( function () {
    				$("#id_accordian").accordion ();
+   				$( document ).tooltip();
    			} );
 
    			function show_message ( title, msg ) {
@@ -165,6 +166,16 @@
 					}
 				}, 'json' );
 			}
+/*
+			function save_template () {
+
+				$.post ( 'wp.php', {})
+			}
+*/
+			function preview_template () {
+				var contents = 	$('#id_textarea_entry').val ();
+				$('#id_div_preview').html( contents );
+ 			}
 
 			$( function () {
 				$( "#id_from" ).datepicker ( {
@@ -283,7 +294,7 @@
 				// When wp save button clicked
 				$("#id_form_wp_account").submit ( function () {
 					var post_variables = $("#id_form_wp_account").serialize ();
-					$.post ( 'wp.php', post_variables, function ( result ) {
+					$.post ( 'wp.php', post_variables + { method: 'account'}, function ( result ) {
 						if ( result['result_code'] == 0 ) {
 							show_message ( 'Saved', 'Wordpress account updated successfully.' );
 							$("#id_form_wp_account input").attr( 'disabled', 'true' );
@@ -327,7 +338,7 @@
 				// When category save button clicked
 				$("#id_button_save_category").click ( function () {
 					var txt_category = $("#id_category option:selected").text ();
-					$.post ( 'wp.php', { wp_category: txt_category }, 
+					$.post ( 'wp.php', { wp_category: txt_category, method: 'category' }, 
 					function ( result ) {
 						if ( result['result_code'] == 0 ) {
 							sync_category ();
@@ -343,6 +354,13 @@
 				$("#id_button_update_category").click ( function () {
 					get_wp_categories ();
 					show_message ( 'Category update', 'trying to update categories of blog.');
+				});
+
+				// When Save temaplte button clicked 
+				$("#id_button_save_template").click ( function () {
+					// Save template to database
+					save_template ();
+					preview_template ();
 				});
 
 				// Check login state 
@@ -468,18 +486,14 @@
 			
 				<h3> Templates </h3>
 				<div id="id_settings_templates" class="cs_settings_templates">
-					<p>HTML form template</p>
+					<p>Edit each part of your post template in HTML form.</p>
 					<label>Title</label>
-					<textarea id="id_textarea_title" disabled> { Hello [# INSERT HERE #] }</textarea><br/>
-					<label>Header</label>
-					<textarea id="id_textarea_header" disabled> </textarea><br/>
+					<textarea id="id_textarea_title" title="This is the title of your blog posts. '[## YEAR ##]' will be replaced with the actual year of posting date. '[## MONTH ##], [## DAY ##] are month and day of posting date, respectively." disabled>{ Hello [# INSERT HERE #] }</textarea><br/>
 					<label>Entry</label>
-					<textarea id="id_textarea_entry" disabled> </textarea><br/>		
-					<label>Footer</label>
-					<textarea id="id_textarea_footer" disabled> </textarea><br/>
+					<textarea id="id_textarea_entry" style="height:50px;" title="This is main part of your blog posts." disabled> </textarea><br/>		
 					<button id="id_button_save_template" style="margin-left:60px;margin-top:10px;" disabled>Save</button><br/><br/>
 					<label>Preview</label>
-					<textarea id="id_textarea_preview" disabled> </textarea>
+					<div id="id_div_preview" style="height:50px;"> </div>
 				</div>
 			</div>
 		</div>

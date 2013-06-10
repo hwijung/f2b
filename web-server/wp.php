@@ -11,9 +11,11 @@
 		
 		// if update 
 		if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) 	{
+
+			$method = $_POST['method'];
 			 
 			// account
-			if ( !isset ( $_POST['wp_category'] ) ) {
+			if ( $method == 'account' ) ) {
 				syslog ( LOG_ERR, "wp_category: " + $_POST['wp_category'] );
 
 				$wp_address = $_POST['nm_wp_address'];
@@ -35,7 +37,7 @@
 				}
 
 			// category
-			} else  {
+			} else if ( $method == 'category' ) ) {
 				syslog ( LOG_ERR, "wp_category: " + $_POST['wp_category'] );
 
 				$wp_category = $_POST['wp_category']; 
@@ -48,6 +50,20 @@
 					exit;
 				} else {
 					echo json_encode ( array ( 'result_code' => 0, 'message' => 'Category information saved.' ) );
+					exit;
+				}
+			} else if ( $method == 'template' ) ) {
+				$wp_title = $_POST['wp_title'];
+				$wp_entry = $_POST['wp_entry'];
+
+				$query = "REPLCE INTO wp_template SET user='$user', wp_title='$wp_title', wp_entry='$wp_entry'";
+				$sth = $db->query ( $query );
+
+				if ( $sth == false )	{
+					echo json_encode( array ( 'result_code' => 1, 'message' => 'Couldn\'t update template' ) );
+					exit;
+				}  else  {
+					echo json_encode( array ( 'result_code' => 0, 'message' => 'Template updated.') );
 					exit;
 				}
 			}
