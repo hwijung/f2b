@@ -81,6 +81,7 @@
 				// update forms
 				fill_fb_account_form ();
 				fill_wp_account_form ();
+				fill_template ();
 
 				switch_login_logout_button ( true );
 				switch_settings_availability ( true );
@@ -166,12 +167,33 @@
 					}
 				}, 'json' );
 			}
-/*
-			function save_template () {
 
-				$.post ( 'wp.php', {})
+			function fill_template () {
+				$.get ( 'wp.php', { method: 'template' }, function ( result ) {
+					var sentence = " is selected as a category for publishing.";
+
+					$("#id_textarea_title").val ( result[0]['wp_title'] );
+					$("#id_textarea_header").val ( result[0]['wp_header'] );
+					$("#id_textarea_entry").val ( result[0]['wp_entry'] );
+					$("#id_textarea_footer").val ( result[0]['wp_footer'] );
+				}, 'json' );
 			}
-*/
+
+			function save_template () {
+				var post_variables = { method: 'template',
+										wp_title: $("#id_textarea_title").val (), 
+										wp_header: $("#id_textarea_header").val (),
+										wp_entry: $("#id_textarea_entry").val (),
+										wp_footer: $("#id_textarea_footer").val () 	};
+				$.post ( 'wp.php', post_variables, function ( result ) { 
+					if ( result['result_code'] == 0 )	{
+						show_message ( "Saved.", result['message'] );
+					} else {
+						show_message ( "Failed", result['message'] );
+					}			
+				}, 'json' );
+			}
+
 			function preview_template () {
 				var contents = 	$('#id_textarea_entry').val ();
 				$('#id_div_preview').html( contents );
@@ -293,8 +315,8 @@
 
 				// When wp save button clicked
 				$("#id_form_wp_account").submit ( function () {
-					var post_variables = $("#id_form_wp_account").serialize ();
-					$.post ( 'wp.php', post_variables + { method: 'account'}, function ( result ) {
+					var post_variables = $("#id_form_wp_account").serialize () + "&method=account";
+					$.post ( 'wp.php', post_variables, function ( result ) {
 						if ( result['result_code'] == 0 ) {
 							show_message ( 'Saved', 'Wordpress account updated successfully.' );
 							$("#id_form_wp_account input").attr( 'disabled', 'true' );
@@ -488,9 +510,13 @@
 				<div id="id_settings_templates" class="cs_settings_templates">
 					<p>Edit each part of your post template in HTML form.</p>
 					<label>Title</label>
-					<textarea id="id_textarea_title" title="This is the title of your blog posts. '[## YEAR ##]' will be replaced with the actual year of posting date. '[## MONTH ##], [## DAY ##] are month and day of posting date, respectively." disabled>{ Hello [# INSERT HERE #] }</textarea><br/>
+					<textarea id="id_textarea_title" title="This is the title of your blog posts. '[## YEAR ##]' will be replaced with the actual year of posting date. '[## MONTH ##], [## DAY ##] are month and day of posting date, respectively." disabled></textarea><br/>
+					<label>Header</label>
+					<textarea id="id_textarea_header" style="height:30px;" title="This is the header of your blog posts." disabled> </textarea><br/>	
 					<label>Entry</label>
 					<textarea id="id_textarea_entry" style="height:50px;" title="This is main part of your blog posts." disabled> </textarea><br/>		
+					<label>Footer</label>
+					<textarea id="id_textarea_footer" style="height:30px;" title="This is the footer of your blog posts." disabled> </textarea><br/>	
 					<button id="id_button_save_template" style="margin-left:60px;margin-top:10px;" disabled>Save</button><br/><br/>
 					<label>Preview</label>
 					<div id="id_div_preview" style="height:50px;"> </div>

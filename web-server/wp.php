@@ -15,7 +15,7 @@
 			$method = $_POST['method'];
 			 
 			// account
-			if ( $method == 'account' ) ) {
+			if ( $method == 'account' ) {
 				syslog ( LOG_ERR, "wp_category: " + $_POST['wp_category'] );
 
 				$wp_address = $_POST['nm_wp_address'];
@@ -37,7 +37,7 @@
 				}
 
 			// category
-			} else if ( $method == 'category' ) ) {
+			} else if ( $method == 'category' ) {
 				syslog ( LOG_ERR, "wp_category: " + $_POST['wp_category'] );
 
 				$wp_category = $_POST['wp_category']; 
@@ -52,11 +52,13 @@
 					echo json_encode ( array ( 'result_code' => 0, 'message' => 'Category information saved.' ) );
 					exit;
 				}
-			} else if ( $method == 'template' ) ) {
+			} else if ( $method == 'template' ) {
 				$wp_title = $_POST['wp_title'];
+				$wp_header = $_POST['wp_header'];
 				$wp_entry = $_POST['wp_entry'];
+				$wp_footer = $_POST['wp_footer'];
 
-				$query = "REPLCE INTO wp_template SET user='$user', wp_title='$wp_title', wp_entry='$wp_entry'";
+				$query = "REPLACE INTO wp_template SET user='$user', wp_title='$wp_title', wp_header='$wp_header', wp_entry='$wp_entry', wp_footer='$wp_footer'";
 				$sth = $db->query ( $query );
 
 				if ( $sth == false )	{
@@ -88,6 +90,17 @@
 				$output = shell_exec ( "ruby /home/root/f2b/getCategories.rb " . $user );
 				echo json_encode ( array ( 'result_code' => 0, 'categories' => $output ) );
 				exit;
+			} else if ( $method == 'template' ) {
+				$query = "SELECT * FROM wp_template WHERE user='$user'";
+
+				$sth = $db->query ( $query );
+
+				foreach ( $sth->fetchAll() as $row )	{
+					echo json_encode ( array ( 'result_code' => 0, $row ) );
+					exit;
+				}	
+				echo json_encode ( array ( 'result_code' => 1, 'message' => 'No matching account.' ) );
+				exit;			
 			}
 		}
 	} else {

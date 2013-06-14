@@ -33,7 +33,9 @@ CREATE TABLE wp_template
 (
 	user varchar(255) NOT NULL,
 	wp_title varchar(255),
+	wp_header text,
 	wp_entry text,
+	wp_footer text,
 	PRIMARY KEY (user)
 );
 

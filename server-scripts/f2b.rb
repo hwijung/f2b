@@ -25,7 +25,7 @@ require 'mysql2'
 @fb_user = "hwijung.ryu"
  
 # Yesterday
-@yesterday = Time.now - 345600
+@yesterday = Time.now - ( 60 * 60 * 24 ) 
 @yesterday_begin = Time.local( @yesterday.year, @yesterday.month, @yesterday.day, 0, 0, 0 )
 @yesterday_end = Time.local( @yesterday.year, @yesterday.month, @yesterday.day, 23, 59, 59 )
 
@@ -50,6 +50,7 @@ end
 
 # Query Wordpress user information
 results = @db_con.query( 'SELECT * FROM wp_account WHERE user = "' + @username + '"', :as=>'hash' )
+results_template = $db_con.query( 'SELECT * FROM wp_template WHERE user = "' + @username + '"', :as=>'hash' )
 
 # Set up blog account
 results.each(:as => :hash) do |row| 
@@ -60,6 +61,15 @@ results.each(:as => :hash) do |row|
 	@blog_apipath = row['wp_apipath']
 	@blog_category = row['wp_category']
 end
+
+# get template
+results_template.each(:as => :hash) do |row|
+	@template_title = row['wp_title']
+	@template_header = row['wp_header']
+	@template_entry = row['wp_entry']
+	@template_footer = row['wp_footer']
+end
+
 
 # Create Blog Object
 @blog = RMetaWebLog.new(@blog_hostname, @blog_apipath, {
@@ -132,7 +142,7 @@ end
 
 # post
 if @post_count != 0
-	@blog.new_post( post_title, @post_contents, @category )
+	# @blog.new_post( post_title, @post_contents, @category )
 	puts "[" + DateTime.now.to_s + "] " +  "Total " + @post_count.to_s + " number of facebook posts are successfully posted."
 else
 	puts "[" + DateTime.now.to_s + "] " + "There's no post to post."
